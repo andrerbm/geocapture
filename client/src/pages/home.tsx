@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLocation } from "wouter";
 import { 
   MapPin, 
   Smartphone, 
@@ -29,6 +30,11 @@ import heroImage from "@assets/generated_images/city_street_at_night_with_tracki
 
 export default function Home() {
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [_, setLocation] = useLocation();
+
+  const handleSearch = () => {
+    setLocation("/searching");
+  };
 
   return (
     <div className="min-h-screen bg-white font-sans">
@@ -116,7 +122,11 @@ export default function Home() {
                </div>
             </div>
             
-            <Button className="w-full h-16 text-xl font-bold rounded-xl shadow-sm bg-[#98D8C6] hover:bg-[#86cbb8] text-white transition-all" size="lg">
+            <Button 
+              className="w-full h-16 text-xl font-bold rounded-xl shadow-sm bg-[#98D8C6] hover:bg-[#86cbb8] text-white transition-all" 
+              size="lg"
+              onClick={handleSearch}
+            >
               Localizar
             </Button>
             
