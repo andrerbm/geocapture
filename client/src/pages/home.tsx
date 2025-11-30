@@ -50,52 +50,86 @@ export default function Home() {
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-8 md:py-16 grid md:grid-cols-2 gap-12 items-center">
         <div className="space-y-8">
-          <div className="inline-flex items-center gap-2 text-primary font-medium text-sm bg-emerald-50 px-4 py-2 rounded-full border border-emerald-100">
-            <span className="font-bold">Mais de 25 milhões de usuários</span>
-            <span className="text-gray-400 font-normal">confiaram em nós</span>
+          {/* Laurel Wreath Header */}
+          <div className="flex flex-col items-center justify-center text-center space-y-1">
+            <div className="flex items-center gap-3 md:gap-4">
+              <svg className="w-6 h-12 md:w-8 md:h-16 text-emerald-300" viewBox="0 0 24 48" fill="currentColor">
+                 <path d="M20.5 44c-1 0-2.5-1.5-3-3 .5-2 2-3.5 4-4 .5 2-1.5 5-1 7zm-4.5-6c-1 0-2.5-1-3-2.5.5-2 2-3 4-3.5.5 2-1.5 4.5-1 6zm-3-6.5c-.5 0-2-1-2.5-2.5.5-2 2-3 3.5-3 .5 2-1.5 4-1 5.5zm-1-6.5c-.5 0-2-.5-2.5-2 .5-1.5 2-2.5 3.5-2.5.5 1.5-1.5 3.5-1 4.5z" />
+              </svg>
+              <div className="flex flex-col">
+                <span className="text-emerald-500 font-bold text-lg md:text-2xl leading-tight">
+                  Mais de 25 milhões de usuários
+                </span>
+                <span className="text-gray-400 text-sm font-medium">
+                  confiaram em nós
+                </span>
+              </div>
+              <svg className="w-6 h-12 md:w-8 md:h-16 text-emerald-300 transform scale-x-[-1]" viewBox="0 0 24 48" fill="currentColor">
+                 <path d="M20.5 44c-1 0-2.5-1.5-3-3 .5-2 2-3.5 4-4 .5 2-1.5 5-1 7zm-4.5-6c-1 0-2.5-1-3-2.5.5-2 2-3 4-3.5.5 2-1.5 4.5-1 6zm-3-6.5c-.5 0-2-1-2.5-2.5.5-2 2-3 3.5-3 .5 2-1.5 4-1 5.5zm-1-6.5c-.5 0-2-.5-2.5-2 .5-1.5 2-2.5 3.5-2.5.5 1.5-1.5 3.5-1 4.5z" />
+              </svg>
+            </div>
           </div>
           
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight tracking-tight">
-            Localize qualquer telefone, <br/>
-            <span className="text-gray-900">em qualquer lugar</span>
-          </h1>
+          {/* Main Headline */}
+          <div className="text-center space-y-3">
+            <h1 className="text-3xl md:text-5xl font-bold text-gray-900 leading-tight tracking-tight">
+              Localize qualquer telefone, <br/>
+              <span className="text-gray-900">em qualquer lugar</span>
+            </h1>
+            <p className="text-gray-500 text-base md:text-lg pt-2">Digite o número que deseja rastrear</p>
+          </div>
           
-          <p className="text-gray-500 text-lg">Digite o número que deseja rastrear</p>
-          
-          <div className="flex flex-wrap gap-3 text-xs font-medium text-gray-500 mb-4">
-            <span className="bg-gray-100 px-2 py-1 rounded flex items-center gap-1"><Smartphone className="h-3 w-3" /> iOS</span>
-            <span className="bg-gray-100 px-2 py-1 rounded flex items-center gap-1"><Smartphone className="h-3 w-3" /> Android</span>
-            <span className="bg-gray-100 px-2 py-1 rounded flex items-center gap-1">Todos os dispositivos</span>
-            <span className="bg-gray-100 px-2 py-1 rounded flex items-center gap-1">Qualquer rede</span>
+          {/* Device Pills */}
+          <div className="flex flex-wrap justify-center gap-2 md:gap-3">
+             <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-300 bg-white text-gray-600 text-sm font-medium hover:bg-gray-50 cursor-default shadow-sm">
+                <svg className="w-4 h-4 fill-current" viewBox="0 0 384 512"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 52.3-11.4 69.5-34.3z"/></svg>
+                iOS
+             </div>
+             <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-300 bg-white text-gray-600 text-sm font-medium hover:bg-gray-50 cursor-default shadow-sm">
+                <svg className="w-4 h-4 fill-current" viewBox="0 0 576 512"><path d="M420.55,301.93a24,24,0,1,1,24-24,24,24,0,0,1-24,24m-265.1,0a24,24,0,1,1,24-24,24,24,0,0,1-24,24m273.7-144.48,47.94-83a10,10,0,1,0-17.27-10l-48.54,84.07a288.8,288.8,0,0,0-246.56,0l-48.54-84.07a10,10,0,1,0-17.27,10l47.94,83C64.53,202.22,8.24,285.55,0,384H576c-8.24-98.45-64.54-181.78-146.85-226.55"/></svg>
+                Android
+             </div>
+             <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-300 bg-white text-gray-600 text-sm font-medium hover:bg-gray-50 cursor-default shadow-sm">
+                <svg className="w-4 h-4 text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                Todos os dispositivos
+             </div>
+             <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-300 bg-white text-gray-600 text-sm font-medium hover:bg-gray-50 cursor-default shadow-sm">
+                <svg className="w-4 h-4 text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                Qualquer rede
+             </div>
           </div>
 
-          <div className="space-y-4 bg-white p-2 rounded-3xl shadow-xl shadow-emerald-100/50 border border-gray-100">
-            <div className="flex gap-2 p-1">
-               <Select defaultValue="br">
-                <SelectTrigger className="w-[110px] bg-gray-50 border-0 rounded-xl focus:ring-0 font-medium">
-                  <span className="mr-2 text-lg">🇧🇷</span> 
-                  <SelectValue placeholder="País" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="br">+55</SelectItem>
-                  <SelectItem value="us">+1</SelectItem>
-                </SelectContent>
-              </Select>
-              <Input 
-                placeholder="Número de telefone" 
-                className="flex-1 bg-gray-50 border-0 rounded-xl h-12 text-lg focus-visible:ring-0"
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
-              />
+          <div className="space-y-4 max-w-xl mx-auto w-full">
+            <div className="flex items-center bg-gray-50 border border-gray-200 rounded-xl p-1 shadow-sm">
+               <div className="flex items-center pl-3 pr-2 border-r border-gray-200 h-10 cursor-pointer hover:bg-gray-100 rounded-l-lg transition-colors">
+                  <img src="https://flagcdn.com/w40/br.png" alt="Brazil" className="w-6 h-auto rounded-sm shadow-sm" />
+                  <svg className="w-4 h-4 ml-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+               </div>
+               <div className="flex-1 flex items-center pl-3">
+                  <span className="text-gray-900 text-lg font-medium mr-2">+55</span>
+                  <input 
+                    type="tel"
+                    className="w-full bg-transparent border-none focus:ring-0 outline-none text-lg p-0 text-gray-900 placeholder-gray-400 h-12"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                  />
+               </div>
             </div>
-            <Button className="w-full h-14 text-lg font-bold rounded-xl shadow-lg shadow-primary/30 hover:shadow-primary/40 transition-all bg-primary hover:bg-primary/90" size="lg">
+            
+            <Button className="w-full h-16 text-xl font-bold rounded-xl shadow-sm bg-[#98D8C6] hover:bg-[#86cbb8] text-white transition-all" size="lg">
               Localizar
             </Button>
-          </div>
-          
-          <div className="flex justify-between md:justify-start md:gap-8 text-xs text-gray-400 px-2">
-            <span className="flex items-center gap-1.5"><ShieldCheck className="h-4 w-4 text-primary" /> 100% Confidencial</span>
-            <span className="flex items-center gap-1.5"><Lock className="h-4 w-4 text-primary" /> SSL Seguro</span>
+            
+            <div className="flex justify-between gap-4 w-full pt-2">
+              <div className="flex-1 flex items-center justify-center gap-2 bg-[#e8f7f3] py-3 rounded-lg">
+                 <ShieldCheck className="h-4 w-4 text-[#5bb59a]" /> 
+                 <span className="text-[#5bb59a] text-xs font-bold">100% Confidencial</span>
+              </div>
+              <div className="flex-1 flex items-center justify-center gap-2 bg-[#e8f7f3] py-3 rounded-lg">
+                 <Lock className="h-4 w-4 text-[#5bb59a]" /> 
+                 <span className="text-[#5bb59a] text-xs font-bold">SSL Seguro</span>
+              </div>
+            </div>
           </div>
         </div>
 
