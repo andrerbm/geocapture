@@ -7,6 +7,7 @@ import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 import Searching from "@/pages/searching";
 import Result from "@/pages/result";
+import Unlock from "@/pages/unlock";
 
 function Router() {
   return (
@@ -14,6 +15,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/searching" component={Searching} />
       <Route path="/result" component={Result} />
+      <Route path="/unlock" component={Unlock} />
       <Route component={NotFound} />
     </Switch>
   );
