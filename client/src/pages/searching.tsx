@@ -350,8 +350,7 @@ export default function Searching() {
             <div className="space-y-2">
               <Progress
                 value={progress}
-                className="h-2 bg-gray-100"
-                indicatorClassName="bg-gradient-to-r from-[#00Cba9] to-[#00e0b8] transition-all duration-300"
+                className="h-2 bg-gray-100 [&>div]:bg-gradient-to-r [&>div]:from-[#00Cba9] [&>div]:to-[#00e0b8] [&>div]:transition-all [&>div]:duration-300"
               />
               <div className="flex justify-between text-xs text-gray-500">
                 <span>Analisando...</span>
