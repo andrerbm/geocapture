@@ -1,4 +1,5 @@
 import { useLocation } from "wouter";
+import { useTranslation } from "react-i18next";
 import { CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -7,6 +8,7 @@ import { parsePhoneNumber } from "libphonenumber-js";
 import mapImage from "@assets/generated_images/top_down_view_of_a_digital_map_interface.png";
 
 export default function Result() {
+  const { t } = useTranslation();
   const [_, setLocation] = useLocation();
 
   // Get phone number from URL
@@ -56,27 +58,27 @@ export default function Result() {
               {phoneNumber}
             </h1>
             <h2 className="text-gray-900 font-bold text-lg mb-8">
-              Número localizado!
+              {t("result.title")}
             </h2>
 
             <div className="space-y-3 text-sm mb-8">
               <div className="flex justify-between items-center border-b border-gray-100 pb-2 border-dotted">
-                <span className="text-gray-500">País</span>
+                <span className="text-gray-500">{t("common.country")}</span>
                 <span className="font-medium text-gray-900">{countryCode}</span>
               </div>
               <div className="flex justify-between items-center border-b border-gray-100 pb-2 border-dotted">
-                <span className="text-gray-500">Fuso Horário</span>
+                <span className="text-gray-500">{t("common.timezone")}</span>
                 <span className="font-medium text-gray-900">(GMT-3)</span>
               </div>
               <div className="flex justify-between items-center border-b border-gray-100 pb-2 border-dotted">
-                <span className="text-gray-500">Cidade</span>
+                <span className="text-gray-500">{t("common.city")}</span>
                 <span className="font-medium text-gray-400 blur-[4px] select-none">
                   Natal/RN
                 </span>
               </div>
               <div className="flex justify-between items-center border-b-0 border-gray-100 pb-2 border-dotted">
-                <span className="text-gray-500">Localização</span>
-                <span className="font-bold text-[#00Cba9]">Definida</span>
+                <span className="text-gray-500">{t("common.location")}</span>
+                <span className="font-bold text-[#00Cba9]">{t("result.defined")}</span>
               </div>
             </div>
 
@@ -86,7 +88,7 @@ export default function Result() {
                 setLocation(`/unlock?phone=${encodeURIComponent(phoneNumber)}`)
               }
             >
-              Continuar
+              {t("common.continue")}
             </Button>
           </CardContent>
         </Card>

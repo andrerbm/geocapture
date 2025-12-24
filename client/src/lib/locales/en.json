@@ -1,0 +1,142 @@
+{
+  "common": {
+    "appName": "GeoCapture",
+    "loading": "Loading...",
+    "error": "Error",
+    "continue": "Continue",
+    "search": "Search",
+    "locate": "Locate",
+    "country": "Country",
+    "city": "City",
+    "address": "Address",
+    "coordinates": "Coordinates",
+    "operator": "Operator",
+    "timezone": "Timezone",
+    "location": "Location",
+    "status": "Status",
+    "online": "Online",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "copyright": "Copyright © 2025 GeoCapture.",
+    "allRightsReserved": "All rights reserved."
+  },
+  "nav": {
+    "title": "GeoCapture"
+  },
+  "hero": {
+    "title": "Track any phone by number with just one click",
+    "subtitle": "Enter the number you want to track",
+    "users": "More than 25 million users",
+    "trusted": "trusted us",
+    "ios": "iOS",
+    "android": "Android",
+    "allDevices": "All devices",
+    "anyNetwork": "Any network",
+    "searchPlaceholder": "Search country...",
+    "noCountryFound": "No country found",
+    "available": "Available for tracking",
+    "invalid": "Invalid format",
+    "confidential": "100% Confidential",
+    "sslSecure": "SSL Secure"
+  },
+  "features": {
+    "title": "What you'll gain",
+    "realtimeLocation": "Real-time location",
+    "locationHistory": "Location history",
+    "locationAlerts": "Location alerts",
+    "arSearch": "AR search",
+    "sosButton": "SOS button",
+    "fallDetection": "Fall detection",
+    "collisionControl": "Collision and speed control",
+    "wearables": "Wearable connection"
+  },
+  "technologies": {
+    "title": "Our technologies",
+    "gpsTracking": "Precise GPS tracking",
+    "gpsDesc": "Advanced positioning technology",
+    "mlAlgorithms": "Modern ML algorithms",
+    "mlDesc": "(Machine Learning)",
+    "iotDevices": "Wide range of devices",
+    "iotDesc": "IoT supported",
+    "tryNow": "Try GeoCapture Now"
+  },
+  "testimonials": {
+    "title": "They write about us",
+    "quote": "The Verge reports that GeoCapture will help you keep your loved ones safe, knowing where they are and helping them if necessary."
+  },
+  "howItWorks": {
+    "title": "How It Works",
+    "step1Title": "Verify the number",
+    "step1Desc": "Enter the phone number you want to verify. This information is private and inaccessible to third parties.",
+    "step2Title": "Send request",
+    "step2Desc": "The recipient receives an SMS to consent to sharing their location. Sharing is optional.",
+    "step3Title": "Receive location",
+    "step3Desc": "You will be notified to view the exact location on a map."
+  },
+  "reviews": {
+    "title": "More than 25 million users",
+    "subtitle": "trusted us",
+    "availableOn": "Available on",
+    "appStore": "App Store",
+    "googlePlay": "Google Play",
+    "review1Name": "Kevin Peters",
+    "review1Role": "Great app",
+    "review1Desc": "Great app to track busy teenagers on the move!",
+    "review2Name": "John Lee",
+    "review2Role": "Perfect for Android and iPhone",
+    "review2Desc": "I'm in the early stages of dementia - this will be useful for my family in the future.",
+    "review3Name": "Megan Smith",
+    "review3Role": "Super useful!",
+    "review3Desc": "Displaying physical addresses at each tracking point along a route is impressive!",
+    "verified": "Verified"
+  },
+  "footer": {
+    "title": "Find Location",
+    "subtitle": "by Phone Number",
+    "description": "Enter the number you want to track"
+  },
+  "searching": {
+    "title": "Locating the number",
+    "connecting": "Connecting to cellular base station",
+    "identifying": "Identifying network operator",
+    "carrierIdentified": "Carrier identified: {{carrier}}",
+    "triangulating": "Triangulating GPS position",
+    "triangulatingRegion": "Triangulating position in {{region}}",
+    "analyzing": "Analyzing...",
+    "error": "Could not get phone information",
+    "loadingMap": "Loading map..."
+  },
+  "result": {
+    "title": "Number located!",
+    "defined": "Defined"
+  },
+  "unlock": {
+    "gpsActive": "GPS signal active • Tracking available",
+    "numberLocated": "Number Located!",
+    "deviceStatus": "Device Status",
+    "lastActivity": "Last Activity",
+    "locationUpdated": "Location updated",
+    "dataConnection": "Data connection active",
+    "movementDetected": "Movement detected",
+    "minutesAgo": "{{minutes}} minutes ago",
+    "unlockTitle": "Unlock Full Access",
+    "expiresIn": "Location data expires in {{time}} for security reasons",
+    "unlockDesc": "See the exact address, GPS coordinates and real-time location history",
+    "slotReserved": "Monitoring slot reserved for this number for a limited time",
+    "unlockButton": "Unlock Location Now",
+    "unlockNow": "Unlock Now",
+    "deviceIdentified": "Device identified near {{city}}, {{region}}",
+    "paymentSecure": "Secure and Discreet Payment",
+    "securePayment": "Secure payment",
+    "immediateAccess": "Immediate access",
+    "whatYouGet": "What you'll have access to:",
+    "fullAddress": "Full address",
+    "gpsCoordinates": "GPS coordinates",
+    "realtimeMap": "Real-time map",
+    "fullHistory": "Full history",
+    "numbersLocated": "+50,000 numbers located this month",
+    "averageRating": "Average rating:",
+    "socialProof": "{{name}} just located a number in {{city}}",
+    "locationFound": "📍 Location Found"
+  }
+}

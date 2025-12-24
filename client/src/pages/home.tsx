@@ -1,5 +1,7 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
+import { useTranslation } from "react-i18next";
+import { useCountryDetection } from "@/hooks/use-country-detection";
 import {
   MapPin,
   Users,
@@ -31,6 +33,7 @@ import examples from "libphonenumber-js/mobile/examples";
 import * as flags from "country-flag-icons/react/3x2";
 import HeroSection from "@/components/HeroSection";
 import PhoneInput from "@/components/PhoneInput";
+import LanguageSelector from "@/components/LanguageSelector";
 
 // =============================================================================
 // Types
@@ -164,16 +167,28 @@ const getMaxLength = (country: CountryCode): number => {
 
 const formatPhoneNumber = (value: string, country: CountryCode): string => {
   try {
+    // Se valor vazio, retornar vazio
+    if (!value || value.trim() === "") return "";
+    
     const digitsOnly = value.replace(/\D/g, "");
+    
+    // Se não há dígitos, retornar vazio
+    if (!digitsOnly) return "";
+    
     const maxLength = getMaxLength(country);
     const limitedDigits = digitsOnly.slice(0, maxLength);
 
     if (!limitedDigits) return "";
 
     const formatter = new AsYouType(country);
-    return formatter.input(limitedDigits);
+    const formatted = formatter.input(limitedDigits);
+    
+    // Retornar valor formatado ou apenas dígitos se formatação falhar
+    return formatted || limitedDigits;
   } catch {
-    return value.replace(/\D/g, "").slice(0, getMaxLength(country));
+    // Em caso de erro, retornar apenas os dígitos (sem formatação)
+    const digitsOnly = value.replace(/\D/g, "");
+    return digitsOnly.slice(0, getMaxLength(country));
   }
 };
 
@@ -198,18 +213,87 @@ function usePhoneField(
 ) {
   const [country, setCountry] = useState<CountryCode>(initialCountry);
   const [value, setValue] = useState("");
+  const [userSelectedCountry, setUserSelectedCountry] = useState(false);
+  const previousDigitsRef = useRef<string>("");
+  const previousFormattedRef = useRef<string>("");
+
+  // Atualizar país quando initialCountry mudar APENAS se o usuário não selecionou manualmente
+  useEffect(() => {
+    if (!userSelectedCountry && initialCountry !== country) {
+      setCountry(initialCountry);
+      // Limpar valor quando país muda para evitar formatação incorreta
+      setValue("");
+      previousDigitsRef.current = "";
+      previousFormattedRef.current = "";
+    }
+  }, [initialCountry, userSelectedCountry, country]);
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      setValue(formatPhoneNumber(e.target.value, country));
+      const inputValue = e.target.value;
+      const previousFormatted = previousFormattedRef.current;
+      
+      // Permitir deleção completa
+      if (inputValue === "") {
+        setValue("");
+        previousDigitsRef.current = "";
+        previousFormattedRef.current = "";
+        return;
+      }
+      
+      // Extrair apenas dígitos do input atual e anterior
+      const currentDigits = inputValue.replace(/\D/g, "");
+      const previousDigits = previousDigitsRef.current;
+      
+      // Detectar deleção: comprimento total menor OU menos dígitos
+      // Isso detecta quando usuário deleta caracteres de formatação também
+      const isDeleting = 
+        inputValue.length < previousFormatted.length || 
+        currentDigits.length < previousDigits.length;
+      
+      if (isDeleting) {
+        // Usuário está deletando - formatar APENAS os dígitos restantes
+        // Isso permite deletar qualquer parte, incluindo DDD e caracteres de formatação
+        if (currentDigits.length === 0) {
+          setValue("");
+          previousDigitsRef.current = "";
+          previousFormattedRef.current = "";
+        } else {
+          // Formatar apenas os dígitos restantes (ignorar caracteres de formatação do input)
+          const formatted = formatPhoneNumber(currentDigits, country);
+          setValue(formatted);
+          previousDigitsRef.current = currentDigits;
+          previousFormattedRef.current = formatted;
+        }
+        return;
+      }
+      
+      // Se está adicionando ou igual, aplicar formatação normalmente
+      const formatted = formatPhoneNumber(inputValue, country);
+      setValue(formatted);
+      // Atualizar refs com os valores formatados
+      previousDigitsRef.current = formatted.replace(/\D/g, "");
+      previousFormattedRef.current = formatted;
     },
     [country]
   );
 
   const handleCountryChange = useCallback((newCountry: string) => {
+    setUserSelectedCountry(true); // Marcar que usuário selecionou manualmente
     setCountry(newCountry as CountryCode);
-    setValue("");
-  }, []);
+    // Reformatar o valor atual com o novo país
+    const digitsOnly = value.replace(/\D/g, "");
+    if (digitsOnly) {
+      const reformatted = formatPhoneNumber(digitsOnly, newCountry as CountryCode);
+      setValue(reformatted);
+      previousDigitsRef.current = digitsOnly;
+      previousFormattedRef.current = reformatted;
+    } else {
+      setValue("");
+      previousDigitsRef.current = "";
+      previousFormattedRef.current = "";
+    }
+  }, [value]);
 
   const isValid = isValidPhoneNumber(value, country);
   const digitCount = value.replace(/\D/g, "").length;
@@ -218,13 +302,33 @@ function usePhoneField(
   const handleSearch = useCallback(() => {
     if (!value.trim() || !isValid) return;
 
-    const currentCountry = countries.find((c) => c.code === country);
-    const fullNumber = currentCountry
-      ? `${currentCountry.dialCode} ${value}`
-      : value;
-
-    onValidSearch(fullNumber);
-  }, [value, isValid, country, onValidSearch]);
+    try {
+      // Tentar parsear o número para garantir formato correto
+      const digitsOnly = value.replace(/\D/g, "");
+      const parsed = parsePhoneNumber(digitsOnly, country);
+      
+      if (parsed && parsed.isValid()) {
+        // Usar formato internacional do libphonenumber-js
+        const fullNumber = parsed.formatInternational();
+        onValidSearch(fullNumber);
+      } else {
+        // Fallback: usar código do país + número
+        const currentCountry = countries.find((c) => c.code === country);
+        const fullNumber = currentCountry
+          ? `${currentCountry.dialCode} ${digitsOnly}`
+          : value;
+        onValidSearch(fullNumber);
+      }
+    } catch (error) {
+      // Fallback em caso de erro
+      const currentCountry = countries.find((c) => c.code === country);
+      const digitsOnly = value.replace(/\D/g, "");
+      const fullNumber = currentCountry
+        ? `${currentCountry.dialCode} ${digitsOnly}`
+        : value;
+      onValidSearch(fullNumber);
+    }
+  }, [value, isValid, country, onValidSearch, countries]);
 
   return {
     country,
@@ -243,7 +347,17 @@ function usePhoneField(
 // =============================================================================
 
 export default function Home() {
+  const { t } = useTranslation();
   const [, setLocation] = useLocation();
+  const { countryCode: detectedCountry, isLoading: isDetectingCountry } = useCountryDetection();
+  const [defaultCountry, setDefaultCountry] = useState<CountryCode>("BR");
+
+  // Atualizar país padrão quando a detecção for concluída
+  useEffect(() => {
+    if (!isDetectingCountry && detectedCountry) {
+      setDefaultCountry(detectedCountry);
+    }
+  }, [detectedCountry, isDetectingCountry]);
 
   const navigateToSearching = useCallback(
     (fullNumber: string) => {
@@ -252,19 +366,20 @@ export default function Home() {
     [setLocation]
   );
 
-  // Hero phone field
-  const heroPhone = usePhoneField("BR", navigateToSearching);
+  // Hero phone field - usar país detectado ou BR como fallback
+  const heroPhone = usePhoneField(defaultCountry, navigateToSearching);
 
-  // Footer phone field
-  const footerPhone = usePhoneField("BR", navigateToSearching);
+  // Footer phone field - usar país detectado ou BR como fallback
+  const footerPhone = usePhoneField(defaultCountry, navigateToSearching);
 
   return (
     <div className="min-h-screen bg-white font-sans overflow-x-hidden">
       {/* Navigation */}
-      <nav className="container mx-auto py-4 px-4 flex items-center justify-center">
+      <nav className="container mx-auto py-4 px-4 flex items-center justify-between">
         <div className="text-primary font-bold text-xl tracking-tight flex items-center gap-1">
-          <MapPin className="fill-primary text-white h-6 w-6" /> GeoCapture
+          <MapPin className="fill-primary text-white h-6 w-6" /> {t("nav.title")}
         </div>
+        <LanguageSelector />
       </nav>
 
       {/* Divider Line */}
@@ -289,49 +404,49 @@ export default function Home() {
       <section className="py-12 bg-slate-50/50">
         <div className="container mx-auto px-4">
           <h2 className="text-2xl md:text-3xl font-bold text-center text-gray-900 mb-10">
-            O que ganhará
+            {t("features.title")}
           </h2>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
             {[
               {
                 icon: MapPin,
-                title: "Localização em tempo real",
+                title: t("features.realtimeLocation"),
                 color: "bg-cyan-50 text-cyan-600",
               },
               {
                 icon: Activity,
-                title: "Histórico de localização",
+                title: t("features.locationHistory"),
                 color: "bg-blue-50 text-blue-600",
               },
               {
                 icon: Bell,
-                title: "Alertas de local",
+                title: t("features.locationAlerts"),
                 color: "bg-emerald-50 text-emerald-600",
               },
               {
                 icon: Search,
-                title: "Busca em RA",
+                title: t("features.arSearch"),
                 color: "bg-purple-50 text-purple-600",
               },
               {
                 icon: Radio,
-                title: "Botão SOS",
+                title: t("features.sosButton"),
                 color: "bg-red-50 text-red-600",
               },
               {
                 icon: HeartPulse,
-                title: "Detecção de quedas",
+                title: t("features.fallDetection"),
                 color: "bg-pink-50 text-pink-600",
               },
               {
                 icon: Zap,
-                title: "Controle de colisão e velocidade",
+                title: t("features.collisionControl"),
                 color: "bg-amber-50 text-amber-600",
               },
               {
                 icon: Watch,
-                title: "Conexão com vestíveis",
+                title: t("features.wearables"),
                 color: "bg-indigo-50 text-indigo-600",
               },
             ].map((feature, i) => (
@@ -359,25 +474,25 @@ export default function Home() {
       <section className="py-12 bg-white">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-10">
-            Nossas tecnologias
+            {t("technologies.title")}
           </h2>
 
           <div className="grid md:grid-cols-3 gap-8 mb-10 max-w-5xl mx-auto">
             {[
               {
                 icon: MapPin,
-                title: "Rastreamento GPS preciso",
-                desc: "Tecnologia avançada de posicionamento",
+                title: t("technologies.gpsTracking"),
+                desc: t("technologies.gpsDesc"),
               },
               {
                 icon: BrainCircuit,
-                title: "Algoritmos modernos de ML",
-                desc: "(Aprendizado de Máquina)",
+                title: t("technologies.mlAlgorithms"),
+                desc: t("technologies.mlDesc"),
               },
               {
                 icon: Cpu,
-                title: "Ampla gama de dispositivos",
-                desc: "IoT suportados",
+                title: t("technologies.iotDevices"),
+                desc: t("technologies.iotDesc"),
               },
             ].map((tech, i) => (
               <div
@@ -400,7 +515,7 @@ export default function Home() {
           </div>
 
           <Button className="h-14 px-10 text-lg font-bold rounded-full shadow-xl shadow-primary/25 bg-primary hover:bg-primary/90 transition-all hover:scale-105">
-            Experimente GeoCapture Agora
+            {t("technologies.tryNow")}
           </Button>
         </div>
       </section>
@@ -409,15 +524,13 @@ export default function Home() {
       <section className="py-12 bg-white border-t border-gray-50">
         <div className="container mx-auto px-4 text-center max-w-3xl">
           <h2 className="text-2xl font-bold text-gray-900 mb-10">
-            Eles escrevem sobre nós
+            {t("testimonials.title")}
           </h2>
 
           <div className="relative p-10 bg-white rounded-[2rem] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] border border-gray-100 mb-12">
             <Quote className="h-8 w-8 text-primary/20 absolute top-8 left-8 rotate-180" />
             <p className="text-gray-600 italic text-xl leading-relaxed relative z-10 pt-6 px-4 font-light">
-              "O Verge relata que GeoCapture ajudará você a manter seus entes
-              queridos seguros, sabendo onde eles estão e ajudando-os se
-              necessário."
+              "{t("testimonials.quote")}"
             </p>
             <div className="mt-8 flex justify-center items-center gap-2">
               <div className="w-8 h-1 bg-primary/20 rounded-full"></div>
@@ -449,7 +562,7 @@ export default function Home() {
       <section className="py-12 bg-white relative overflow-hidden">
         <div className="container mx-auto px-4 relative z-10">
           <h2 className="text-2xl md:text-3xl font-bold text-center text-gray-900 mb-12">
-            Como Funciona
+            {t("howItWorks.title")}
           </h2>
 
           <div className="grid md:grid-cols-3 gap-8 relative">
@@ -461,18 +574,18 @@ export default function Home() {
             {[
               {
                 step: 1,
-                title: "Verificar o número",
-                desc: "Insira o número de telefone que deseja verificar. Essas informações são privadas e inacessíveis a terceiros.",
+                title: t("howItWorks.step1Title"),
+                desc: t("howItWorks.step1Desc"),
               },
               {
                 step: 2,
-                title: "Enviar solicitação",
-                desc: "O destinatário recebe um SMS para consentir com sua localização. O compartilhamento é opcional.",
+                title: t("howItWorks.step2Title"),
+                desc: t("howItWorks.step2Desc"),
               },
               {
                 step: 3,
-                title: "Receber a localização",
-                desc: "Você será notificado para visualizar a localização exata em um mapa.",
+                title: t("howItWorks.step3Title"),
+                desc: t("howItWorks.step3Desc"),
               },
             ].map((item, i) => (
               <div
@@ -501,7 +614,7 @@ export default function Home() {
 
           <div className="text-center mt-16">
             <Button className="h-14 px-10 text-lg font-bold rounded-full shadow-xl shadow-primary/25 bg-primary hover:bg-primary/90 transition-all hover:scale-105">
-              Experimente GeoCapture Agora
+              {t("technologies.tryNow")}
             </Button>
           </div>
         </div>
@@ -513,10 +626,10 @@ export default function Home() {
           <div className="text-center mb-14">
             <div className="inline-flex items-center justify-center mb-4">
               <div className="bg-white px-6 py-2 rounded-full shadow-sm border border-gray-100 flex items-center gap-2 text-primary font-bold text-lg">
-                <Users className="h-5 w-5" /> Mais de 25 milhões de usuários
+                <Users className="h-5 w-5" /> {t("reviews.title")}
               </div>
             </div>
-            <p className="text-gray-400 font-medium">confiaram em nós</p>
+            <p className="text-gray-400 font-medium">{t("reviews.subtitle")}</p>
           </div>
 
           <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-6 mb-12">
@@ -531,10 +644,10 @@ export default function Home() {
               </svg>
               <div className="flex flex-col">
                 <span className="text-[10px] text-gray-500 leading-none">
-                  Disponível na
+                  {t("reviews.availableOn")}
                 </span>
                 <span className="font-bold text-gray-900 text-sm leading-tight">
-                  App Store
+                  {t("reviews.appStore")}
                 </span>
               </div>
               <div className="flex items-center gap-1.5 ml-2 pl-3 border-l border-gray-200">
@@ -571,10 +684,10 @@ export default function Home() {
               </svg>
               <div className="flex flex-col">
                 <span className="text-[10px] text-gray-500 leading-none">
-                  Disponível no
+                  {t("reviews.availableOn")}
                 </span>
                 <span className="font-bold text-gray-900 text-sm leading-tight">
-                  Google Play
+                  {t("reviews.googlePlay")}
                 </span>
               </div>
               <div className="flex items-center gap-1.5 ml-2 pl-3 border-l border-gray-200">
@@ -593,21 +706,21 @@ export default function Home() {
           <div className="grid md:grid-cols-3 gap-6">
             {[
               {
-                name: "Kevin Peters",
-                role: "Ótimo app",
-                desc: "Ótimo app para acompanhar adolescentes ocupados em movimento!",
+                name: t("reviews.review1Name"),
+                role: t("reviews.review1Role"),
+                desc: t("reviews.review1Desc"),
                 img: "https://i.pravatar.cc/150?u=5",
               },
               {
-                name: "John Lee",
-                role: "Perfeito para Android e iPhone",
-                desc: "Estou nos primeiros estágios de demência - isto será útil para minha família no futuro.",
+                name: t("reviews.review2Name"),
+                role: t("reviews.review2Role"),
+                desc: t("reviews.review2Desc"),
                 img: "https://i.pravatar.cc/150?u=8",
               },
               {
-                name: "Megan Smith",
-                role: "Super útil!",
-                desc: "Exibir endereços físicos em cada ponto de rastreamento ao longo de uma rota é impressionante!",
+                name: t("reviews.review3Name"),
+                role: t("reviews.review3Role"),
+                desc: t("reviews.review3Desc"),
                 img: "https://i.pravatar.cc/150?u=3",
               },
             ].map((review, i) => (
@@ -627,7 +740,7 @@ export default function Home() {
                       </h4>
                       <div className="flex items-center text-emerald-500 text-xs font-medium mt-0.5">
                         <CheckCircle2 className="h-3 w-3 mr-1 fill-emerald-500 text-white" />{" "}
-                        Verificado
+                        {t("reviews.verified")}
                       </div>
                     </div>
                   </div>
@@ -650,12 +763,12 @@ export default function Home() {
           <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
 
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8 leading-tight">
-            Encontrar Localização
+            {t("footer.title")}
             <br />
-            por Número de Telefone
+            {t("footer.subtitle")}
           </h2>
           <p className="text-gray-500 mb-10 text-lg">
-            Digite o número que deseja rastrear
+            {t("footer.description")}
           </p>
 
           <PhoneInput
@@ -716,20 +829,20 @@ export default function Home() {
           </div>
 
           <div className="text-center text-gray-400 text-xs space-y-4">
-            <p>Copyright © 2025 GeoCapture.</p>
-            <p>Todos os direitos reservados.</p>
+            <p>{t("common.copyright")}</p>
+            <p>{t("common.allRightsReserved")}</p>
             <div className="flex justify-center gap-6 mt-4">
               <a
                 href="#"
                 className="underline hover:text-gray-600 transition-colors"
               >
-                Privacidade
+                {t("common.privacy")}
               </a>
               <a
                 href="#"
                 className="underline hover:text-gray-600 transition-colors"
               >
-                Termos
+                {t("common.terms")}
               </a>
             </div>
           </div>

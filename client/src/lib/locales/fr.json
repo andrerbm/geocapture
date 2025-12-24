@@ -1,0 +1,143 @@
+{
+  "common": {
+    "appName": "GeoCapture",
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "continue": "Continuer",
+    "search": "Rechercher",
+    "locate": "Localiser",
+    "country": "Pays",
+    "city": "Ville",
+    "address": "Adresse",
+    "coordinates": "Coordonnées",
+    "operator": "Opérateur",
+    "timezone": "Fuseau horaire",
+    "location": "Localisation",
+    "status": "Statut",
+    "online": "En ligne",
+    "privacy": "Confidentialité",
+    "terms": "Conditions",
+    "copyright": "Copyright © 2025 GeoCapture.",
+    "allRightsReserved": "Tous droits réservés."
+  },
+  "nav": {
+    "title": "GeoCapture"
+  },
+  "hero": {
+    "title": "Suivez n'importe quel téléphone par numéro en un seul clic",
+    "subtitle": "Entrez le numéro que vous souhaitez suivre",
+    "users": "Plus de 25 millions d'utilisateurs",
+    "trusted": "nous ont fait confiance",
+    "ios": "iOS",
+    "android": "Android",
+    "allDevices": "Tous les appareils",
+    "anyNetwork": "N'importe quel réseau",
+    "searchPlaceholder": "Rechercher un pays...",
+    "noCountryFound": "Aucun pays trouvé",
+    "available": "Disponible pour le suivi",
+    "invalid": "Format invalide",
+    "confidential": "100% Confidentiel",
+    "sslSecure": "SSL Sécurisé"
+  },
+  "features": {
+    "title": "Ce que vous obtiendrez",
+    "realtimeLocation": "Localisation en temps réel",
+    "locationHistory": "Historique des localisations",
+    "locationAlerts": "Alertes de localisation",
+    "arSearch": "Recherche RA",
+    "sosButton": "Bouton SOS",
+    "fallDetection": "Détection de chute",
+    "collisionControl": "Contrôle de collision et de vitesse",
+    "wearables": "Connexion aux wearables"
+  },
+  "technologies": {
+    "title": "Nos technologies",
+    "gpsTracking": "Suivi GPS précis",
+    "gpsDesc": "Technologie de positionnement avancée",
+    "mlAlgorithms": "Algorithmes ML modernes",
+    "mlDesc": "(Apprentissage Automatique)",
+    "iotDevices": "Large gamme d'appareils",
+    "iotDesc": "IoT pris en charge",
+    "tryNow": "Essayez GeoCapture Maintenant"
+  },
+  "testimonials": {
+    "title": "Ils écrivent sur nous",
+    "quote": "The Verge rapporte que GeoCapture vous aidera à garder vos proches en sécurité, en sachant où ils se trouvent et en les aidant si nécessaire."
+  },
+  "howItWorks": {
+    "title": "Comment ça fonctionne",
+    "step1Title": "Vérifier le numéro",
+    "step1Desc": "Entrez le numéro de téléphone que vous souhaitez vérifier. Ces informations sont privées et inaccessibles aux tiers.",
+    "step2Title": "Envoyer la demande",
+    "step2Desc": "Le destinataire reçoit un SMS pour consentir au partage de sa localisation. Le partage est optionnel.",
+    "step3Title": "Recevoir la localisation",
+    "step3Desc": "Vous serez notifié pour visualiser la localisation exacte sur une carte."
+  },
+  "reviews": {
+    "title": "Plus de 25 millions d'utilisateurs",
+    "subtitle": "nous ont fait confiance",
+    "availableOn": "Disponible sur",
+    "appStore": "App Store",
+    "googlePlay": "Google Play",
+    "review1Name": "Kevin Peters",
+    "review1Role": "Excellente application",
+    "review1Desc": "Excellente application pour suivre les adolescents occupés en déplacement !",
+    "review2Name": "John Lee",
+    "review2Role": "Parfait pour Android et iPhone",
+    "review2Desc": "Je suis aux premiers stades de la démence - ce sera utile pour ma famille à l'avenir.",
+    "review3Name": "Megan Smith",
+    "review3Role": "Super utile !",
+    "review3Desc": "Afficher les adresses physiques à chaque point de suivi le long d'un itinéraire est impressionnant !",
+    "verified": "Vérifié"
+  },
+  "footer": {
+    "title": "Trouver la Localisation",
+    "subtitle": "par Numéro de Téléphone",
+    "description": "Entrez le numéro que vous souhaitez suivre"
+  },
+  "searching": {
+    "title": "Localisation du numéro",
+    "connecting": "Connexion à la station de base cellulaire",
+    "identifying": "Identification de l'opérateur réseau",
+    "carrierIdentified": "Opérateur identifié : {{carrier}}",
+    "triangulating": "Triangulation de la position GPS",
+    "triangulatingRegion": "Triangulation de la position dans {{region}}",
+    "analyzing": "Analyse...",
+    "error": "Impossible d'obtenir les informations du téléphone",
+    "loadingMap": "Chargement de la carte..."
+  },
+  "result": {
+    "title": "Numéro localisé !",
+    "defined": "Définie"
+  },
+  "unlock": {
+    "gpsActive": "Signal GPS actif • Suivi disponible",
+    "numberLocated": "Numéro Localisé !",
+    "deviceStatus": "Statut de l'Appareil",
+    "lastActivity": "Dernière Activité",
+    "locationUpdated": "Localisation mise à jour",
+    "dataConnection": "Connexion de données active",
+    "movementDetected": "Mouvement détecté",
+    "minutesAgo": "Il y a {{minutes}} minutes",
+    "unlockTitle": "Débloquer l'Accès Complet",
+    "expiresIn": "Les données de localisation expirent dans {{time}} pour des raisons de sécurité",
+    "unlockDesc": "Voir l'adresse exacte, les coordonnées GPS et l'historique de localisation en temps réel",
+    "slotReserved": "Emplacement de surveillance réservé pour ce numéro pour une durée limitée",
+    "unlockButton": "Débloquer la Localisation Maintenant",
+    "unlockNow": "Débloquer Maintenant",
+    "deviceIdentified": "Appareil identifié près de {{city}}, {{region}}",
+    "paymentSecure": "Paiement Sécurisé et Discret",
+    "securePayment": "Paiement sécurisé",
+    "immediateAccess": "Accès immédiat",
+    "whatYouGet": "À quoi vous aurez accès :",
+    "fullAddress": "Adresse complète",
+    "gpsCoordinates": "Coordonnées GPS",
+    "realtimeMap": "Carte en temps réel",
+    "fullHistory": "Historique complet",
+    "numbersLocated": "+50 000 numéros localisés ce mois-ci",
+    "averageRating": "Note moyenne :",
+    "socialProof": "{{name}} vient de localiser un numéro à {{city}}",
+    "locationFound": "📍 Localisation Trouvée"
+  }
+}
+

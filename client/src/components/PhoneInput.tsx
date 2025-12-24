@@ -1,12 +1,12 @@
-import { useMemo, useCallback, memo, useState } from "react";
-import { ShieldCheck, Lock } from "lucide-react";
+import { useMemo, useCallback, memo, useState, useRef, useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { ShieldCheck, Lock, Search, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-} from "@/components/ui/select";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { CountryCode } from "libphonenumber-js";
 
 interface Country {
@@ -42,6 +42,8 @@ const StatusIndicator = memo(
     maxDigits: number;
     isHero: boolean;
   }) => {
+    const { t } = useTranslation();
+
     if (currentDigits < maxDigits) return null;
 
     return (
@@ -68,7 +70,7 @@ const StatusIndicator = memo(
                   clipRule="evenodd"
                 />
               </svg>
-              Disponível para rastreamento
+              {t("hero.available")}
             </>
           ) : (
             <>
@@ -83,7 +85,7 @@ const StatusIndicator = memo(
                   clipRule="evenodd"
                 />
               </svg>
-              Formato inválido
+              {t("hero.invalid")}
             </>
           )}
         </span>
@@ -93,20 +95,8 @@ const StatusIndicator = memo(
 );
 StatusIndicator.displayName = "StatusIndicator";
 
-// ✅ OTIMIZAÇÃO 2: Memoizar item do país
-const CountryItem = memo(({ country }: { country: Country }) => (
-  <div className="flex items-center gap-3">
-    {country.FlagComponent && (
-      <country.FlagComponent className="w-6 h-4 rounded-sm shadow-sm" />
-    )}
-    <span className="font-medium text-sm text-gray-900">{country.name}</span>
-    <span className="text-gray-400 text-sm ml-auto">{country.dialCode}</span>
-  </div>
-));
-CountryItem.displayName = "CountryItem";
-
-// ✅ OTIMIZAÇÃO 3: Virtualizar lista de países (simple version)
-const VirtualizedCountryList = memo(
+// Componente de seleção de país melhorado
+const CountrySelector = memo(
   ({
     countries,
     selectedCountry,
@@ -116,68 +106,133 @@ const VirtualizedCountryList = memo(
     selectedCountry: CountryCode;
     onCountryChange: (value: string) => void;
   }) => {
+    const { t } = useTranslation();
+    const [open, setOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
+    const searchInputRef = useRef<HTMLInputElement>(null);
 
     // Filtrar países baseado na busca
     const filteredCountries = useMemo(() => {
-      if (!searchTerm) return countries;
-      const term = searchTerm.toLowerCase();
+      if (!searchTerm.trim()) return countries;
+      const term = searchTerm.toLowerCase().trim();
       return countries.filter(
-        (c) => c.name.toLowerCase().includes(term) || c.dialCode.includes(term)
+        (c) =>
+          c.name.toLowerCase().includes(term) ||
+          c.dialCode.includes(term) ||
+          c.code.toLowerCase().includes(term)
       );
     }, [countries, searchTerm]);
 
+    // Focar no input de busca quando o popover abrir
+    useEffect(() => {
+      if (open && searchInputRef.current) {
+        // Pequeno delay para garantir que o popover está renderizado
+        setTimeout(() => {
+          searchInputRef.current?.focus();
+        }, 100);
+      } else {
+        setSearchTerm("");
+      }
+    }, [open]);
+
+    const selectedCountryData = useMemo(
+      () => countries.find((c) => c.code === selectedCountry) || countries[0],
+      [countries, selectedCountry]
+    );
+
+    const handleSelectCountry = (code: string) => {
+      onCountryChange(code);
+      setOpen(false);
+      setSearchTerm("");
+    };
+
     return (
-      <Select value={selectedCountry} onValueChange={onCountryChange}>
-        <SelectTrigger className="w-auto bg-transparent border-none shadow-none focus:ring-0 px-2 h-11 gap-1">
-          {(() => {
-            const selected =
-              countries.find((c) => c.code === selectedCountry) || countries[0];
-            return (
-              selected.FlagComponent && (
-                <selected.FlagComponent className="w-6 h-4 rounded-sm shadow-sm" />
-              )
-            );
-          })()}
-        </SelectTrigger>
-        <SelectContent className="max-h-[300px] rounded-xl">
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <button
+            type="button"
+            className="flex items-center gap-2 px-2 py-1.5 hover:bg-gray-50 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-[#00Cba9] focus:ring-offset-1"
+            aria-label="Selecionar país"
+          >
+            {selectedCountryData?.FlagComponent && (
+              <selectedCountryData.FlagComponent className="w-6 h-4 rounded-sm shadow-sm flex-shrink-0" />
+            )}
+            <ChevronDown className="w-4 h-4 text-gray-400 flex-shrink-0" />
+          </button>
+        </PopoverTrigger>
+        <PopoverContent
+          className="w-[320px] sm:w-[380px] p-0 z-50"
+          align="start"
+          sideOffset={4}
+        >
           {/* Campo de busca */}
-          <div className="p-2 border-b sticky top-0 bg-white">
-            <input
-              type="text"
-              placeholder="Buscar país..."
-              className="w-full px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00Cba9]"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              onClick={(e) => e.stopPropagation()}
-            />
+          <div className="p-3 border-b sticky top-0 bg-white z-10">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <input
+                ref={searchInputRef}
+                type="text"
+                placeholder={t("hero.searchPlaceholder")}
+                className="w-full pl-10 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00Cba9] focus:border-transparent"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Escape") {
+                    setOpen(false);
+                  }
+                }}
+              />
+            </div>
           </div>
 
-          {/* Lista filtrada - renderiza apenas visíveis */}
-          <div className="max-h-[250px] overflow-y-auto">
-            {filteredCountries.slice(0, 50).map((country) => (
-              <SelectItem
-                key={country.code}
-                value={country.code}
-                className="rounded-lg"
-              >
-                <CountryItem country={country} />
-              </SelectItem>
-            ))}
-
-            {filteredCountries.length > 50 && (
-              <div className="p-2 text-xs text-gray-400 text-center">
-                +{filteredCountries.length - 50} países... Continue digitando
-                para filtrar
+          {/* Lista de países */}
+          <div className="max-h-[300px] overflow-y-auto">
+            {filteredCountries.length === 0 ? (
+              <div className="p-4 text-center text-sm text-gray-500">
+                {t("hero.noCountryFound")}
               </div>
+            ) : (
+              filteredCountries.map((country) => (
+                <button
+                  key={country.code}
+                  type="button"
+                  onClick={() => handleSelectCountry(country.code)}
+                  className={`w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors text-left ${
+                    selectedCountry === country.code ? "bg-[#00Cba9]/10" : ""
+                  }`}
+                >
+                  {country.FlagComponent && (
+                    <country.FlagComponent className="w-6 h-4 rounded-sm shadow-sm flex-shrink-0" />
+                  )}
+                  <span className="font-medium text-sm text-gray-900 flex-1">
+                    {country.name}
+                  </span>
+                  <span className="text-gray-500 text-sm font-medium">
+                    {country.dialCode}
+                  </span>
+                  {selectedCountry === country.code && (
+                    <svg
+                      className="w-4 h-4 text-[#00Cba9] flex-shrink-0"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  )}
+                </button>
+              ))
             )}
           </div>
-        </SelectContent>
-      </Select>
+        </PopoverContent>
+      </Popover>
     );
   }
 );
-VirtualizedCountryList.displayName = "VirtualizedCountryList";
+CountrySelector.displayName = "CountrySelector";
 
 export default function PhoneInputOptimized({
   phoneNumber,
@@ -191,6 +246,7 @@ export default function PhoneInputOptimized({
   maxDigits,
   variant = "hero",
 }: PhoneInputProps) {
+  const { t } = useTranslation();
   const isHero = variant === "hero";
 
   // ✅ OTIMIZAÇÃO 4: Cache do país selecionado
@@ -233,37 +289,40 @@ export default function PhoneInputOptimized({
     return `${base} ${border}`;
   }, [isHero, isValid]);
 
-  // ✅ OTIMIZAÇÃO 7: Badges estáticos (já estava bom!)
+  // ✅ OTIMIZAÇÃO 7: Badges estáticos
   const heroBadges = useMemo(
     () => (
       <div className="flex justify-between gap-4 w-full pt-2">
         <div className="flex-1 flex items-center justify-center gap-2 bg-[#e8f7f3] py-3 rounded-lg">
           <ShieldCheck className="h-4 w-4 text-[#5bb59a]" />
           <span className="text-[#5bb59a] text-xs font-bold">
-            100% Confidencial
+            {t("hero.confidential")}
           </span>
         </div>
         <div className="flex-1 flex items-center justify-center gap-2 bg-[#e8f7f3] py-3 rounded-lg">
           <Lock className="h-4 w-4 text-[#5bb59a]" />
-          <span className="text-[#5bb59a] text-xs font-bold">SSL Seguro</span>
+          <span className="text-[#5bb59a] text-xs font-bold">
+            {t("hero.sslSecure")}
+          </span>
         </div>
       </div>
     ),
-    []
+    [t]
   );
 
   const footerBadges = useMemo(
     () => (
       <div className="flex justify-center gap-8 text-xs text-gray-400 mt-4">
         <span className="flex items-center gap-1.5">
-          <ShieldCheck className="h-4 w-4 text-primary" /> 100% Confidencial
+          <ShieldCheck className="h-4 w-4 text-primary" />{" "}
+          {t("hero.confidential")}
         </span>
         <span className="flex items-center gap-1.5">
-          <Lock className="h-4 w-4 text-primary" /> SSL Seguro
+          <Lock className="h-4 w-4 text-primary" /> {t("hero.sslSecure")}
         </span>
       </div>
     ),
-    []
+    [t]
   );
 
   // ✅ OTIMIZAÇÃO 8: Mostrar status apenas quando necessário
@@ -282,8 +341,8 @@ export default function PhoneInputOptimized({
       )}
 
       <div className={inputContainerClasses}>
-        {/* Country selector virtualizado */}
-        <VirtualizedCountryList
+        {/* Country selector melhorado */}
+        <CountrySelector
           countries={countries}
           selectedCountry={selectedCountry}
           onCountryChange={onCountryChange}
@@ -293,11 +352,11 @@ export default function PhoneInputOptimized({
         <div className={`w-px ${isHero ? "h-7" : "h-5"} bg-gray-200 mx-1`} />
 
         {/* Input otimizado */}
-        <div className="flex items-baseline flex-1">
+        <div className="flex items-baseline flex-1 min-w-0">
           <span
             className={`text-gray-900 ${
               isHero ? "text-base md:text-lg" : "text-sm md:text-base"
-            } whitespace-nowrap`}
+            } whitespace-nowrap flex-shrink-0`}
           >
             {selectedCountryData.dialCode}
           </span>
@@ -307,7 +366,7 @@ export default function PhoneInputOptimized({
             autoComplete="tel"
             className={`flex-1 bg-transparent border-none focus:ring-0 outline-none ${
               isHero ? "text-base md:text-lg" : "text-sm md:text-base"
-            } text-gray-900 ${isHero ? "h-11" : "h-9"} ml-1`}
+            } text-gray-900 ${isHero ? "h-11" : "h-9"} ml-1 min-w-0`}
             placeholder=""
             value={phoneNumber}
             onChange={onPhoneChange}
@@ -322,7 +381,7 @@ export default function PhoneInputOptimized({
         onClick={onSearch}
         disabled={!isValid}
       >
-        Localizar
+        {t("common.locate")}
       </Button>
 
       {isHero ? heroBadges : footerBadges}

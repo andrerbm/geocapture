@@ -1,5 +1,6 @@
 import { useLocation } from "wouter";
 import { useState, useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Lock,
   MapPin,
@@ -20,6 +21,7 @@ import axios from "axios";
 import { MapContainer, TileLayer, Marker, useMap, Popup } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import LanguageSelector from "@/components/LanguageSelector";
 
 // Fix para ícones padrão do Leaflet
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -75,6 +77,7 @@ function LocationMarker({
   city: string;
   region: string;
 }) {
+  const { t } = useTranslation();
   const markerRef = useRef<any>(null);
 
   useEffect(() => {
@@ -103,7 +106,7 @@ function LocationMarker({
     >
       <Popup>
         <div className="text-center font-bold text-red-600 text-sm">
-          📍 Localização Encontrada
+          {t("unlock.locationFound")}
           <br />
           <span className="text-xs text-gray-600 font-normal">
             {city}, {region}
@@ -139,6 +142,7 @@ const testimonials = [
 ];
 
 export default function Unlock() {
+  const { t } = useTranslation();
   const [_, setLocation] = useLocation();
   const [pulseActive, setPulseActive] = useState(true);
   const [ipLocation, setIpLocation] = useState<IPLocationData | null>(null);
@@ -261,7 +265,7 @@ export default function Unlock() {
       const randomTestimonial =
         testimonials[Math.floor(Math.random() * testimonials.length)];
       setToastMessage(
-        `${randomTestimonial.name} acabou de localizar um número em ${randomTestimonial.city}`
+        t("unlock.socialProof", { name: randomTestimonial.name, city: randomTestimonial.city })
       );
       setShowToast(true);
 
@@ -315,10 +319,11 @@ export default function Unlock() {
   return (
     <div className="min-h-screen bg-white font-sans">
       {/* Navigation */}
-      <nav className="container mx-auto py-4 px-4 flex items-center justify-center">
+      <nav className="container mx-auto py-4 px-4 flex items-center justify-between">
         <div className="text-primary font-bold text-xl tracking-tight flex items-center gap-1">
-          <MapPin className="fill-primary text-white h-6 w-6" /> GeoCapture
+          <MapPin className="fill-primary text-white h-6 w-6" /> {t("nav.title")}
         </div>
+        <LanguageSelector />
       </nav>
 
       {/* Divider Line */}
@@ -337,7 +342,7 @@ export default function Unlock() {
                 <div className="absolute inset-0 w-2 h-2 bg-primary rounded-full animate-ping"></div>
               </div>
               <span className="text-sm font-medium text-primary">
-                Sinal GPS ativo • Rastreamento disponível
+                {t("unlock.gpsActive")}
               </span>
             </div>
           </div>
@@ -345,7 +350,7 @@ export default function Unlock() {
           {/* Main Title */}
           <div className="text-center space-y-2">
             <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
-              Número <span className="text-primary">Localizado!</span>
+              {t("unlock.numberLocated")}
             </h1>
             <p className="text-gray-600 text-lg">
               <span className="font-semibold text-primary">{phoneNumber}</span>
@@ -430,16 +435,13 @@ export default function Unlock() {
                           <div className="absolute inset-0 bg-primary rounded-full animate-ping opacity-75"></div>
                           <div className="relative bg-primary text-white text-xs font-bold px-3 py-1 rounded-full flex items-center gap-2">
                             <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></div>
-                            GPS ATIVO
+                            {t("unlock.gpsActive").split("•")[0].trim()}
                           </div>
                         </div>
 
                         {/* Texto Dinâmico */}
                         <p className="text-sm font-semibold text-gray-900 text-center">
-                          Aparelho identificado próximo a{" "}
-                          <span className="text-primary">
-                            {displayCity}, {displayRegion}
-                          </span>
+                          {t("unlock.deviceIdentified", { city: displayCity, region: displayRegion })}
                         </p>
 
                         {/* CTA de Urgência */}
@@ -448,7 +450,7 @@ export default function Unlock() {
                           onClick={handleUnlock}
                         >
                           <Lock className="w-4 h-4 mr-2" />
-                          Desbloquear Agora
+                          {t("unlock.unlockNow")}
                         </Button>
                       </div>
                     </div>
@@ -459,7 +461,7 @@ export default function Unlock() {
                     <div className="text-center">
                       <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
                       <p className="text-sm text-gray-600">
-                        Carregando mapa...
+                        {t("searching.loadingMap")}
                       </p>
                     </div>
                   </div>
@@ -471,11 +473,11 @@ export default function Unlock() {
                 <div className="flex items-center gap-2">
                   <Smartphone className="w-5 h-5 text-primary" />
                   <h3 className="font-semibold text-gray-900">
-                    Status do Aparelho
+                    {t("unlock.deviceStatus")}
                   </h3>
                   <div className="ml-auto flex items-center gap-1 text-xs text-primary">
                     <div className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse"></div>
-                    Online
+                    {t("common.online")}
                   </div>
                 </div>
               </div>
@@ -487,7 +489,7 @@ export default function Unlock() {
                   <div className="bg-emerald-50/50 rounded-xl p-3 border border-emerald-100">
                     <div className="flex items-center gap-2 mb-1">
                       <MapPin className="w-4 h-4 text-primary" />
-                      <span className="text-xs text-gray-600">Cidade</span>
+                      <span className="text-xs text-gray-600">{t("common.city")}</span>
                     </div>
                     <p className="text-gray-900 font-semibold">
                       {displayCity}, {displayRegion}
@@ -498,7 +500,7 @@ export default function Unlock() {
                   <div className="bg-blue-50 rounded-xl p-3 border border-blue-100">
                     <div className="flex items-center gap-2 mb-1">
                       <Signal className="w-4 h-4 text-blue-600" />
-                      <span className="text-xs text-gray-600">Operadora</span>
+                      <span className="text-xs text-gray-600">{t("common.operator")}</span>
                     </div>
                     <p className="text-gray-900 font-semibold">
                       {currentLocation.operator}
@@ -509,7 +511,7 @@ export default function Unlock() {
                   <div className="bg-gray-50 rounded-xl p-3 relative overflow-hidden border border-gray-200">
                     <div className="flex items-center gap-2 mb-1">
                       <Navigation className="w-4 h-4 text-gray-400" />
-                      <span className="text-xs text-gray-600">Endereço</span>
+                      <span className="text-xs text-gray-600">{t("common.address")}</span>
                     </div>
                     <p className="text-gray-900 font-semibold blur-sm select-none">
                       Rua das Flores, 123
@@ -523,7 +525,7 @@ export default function Unlock() {
                   <div className="bg-gray-50 rounded-xl p-3 relative overflow-hidden border border-gray-200">
                     <div className="flex items-center gap-2 mb-1">
                       <Radio className="w-4 h-4 text-gray-400" />
-                      <span className="text-xs text-gray-600">Coordenadas</span>
+                      <span className="text-xs text-gray-600">{t("common.coordinates")}</span>
                     </div>
                     <p className="text-gray-900 font-semibold blur-sm select-none">
                       {mapCenter[0].toFixed(4)}, {mapCenter[1].toFixed(4)}
@@ -543,7 +545,7 @@ export default function Unlock() {
               <div className="flex items-center gap-2 mb-4">
                 <Clock className="w-5 h-5 text-primary" />
                 <h3 className="font-semibold text-gray-900">
-                  Última Atividade
+                  {t("unlock.lastActivity")}
                 </h3>
               </div>
 
@@ -552,10 +554,10 @@ export default function Unlock() {
                   <div className="w-2 h-2 bg-primary rounded-full"></div>
                   <div className="flex-1">
                     <p className="text-sm text-gray-900">
-                      Localização atualizada
+                      {t("unlock.locationUpdated")}
                     </p>
                     <p className="text-xs text-gray-500">
-                      Há {lastActivityMinutes} minutos
+                      {t("unlock.minutesAgo", { minutes: lastActivityMinutes })}
                     </p>
                   </div>
                   <CheckCircle2 className="w-4 h-4 text-primary" />
@@ -565,10 +567,10 @@ export default function Unlock() {
                   <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
                   <div className="flex-1">
                     <p className="text-sm text-gray-900">
-                      Conexão de dados ativa
+                      {t("unlock.dataConnection")}
                     </p>
                     <p className="text-xs text-gray-500">
-                      Há {lastActivityMinutes + 3} minutos
+                      {t("unlock.minutesAgo", { minutes: lastActivityMinutes + 3 })}
                     </p>
                   </div>
                   <CheckCircle2 className="w-4 h-4 text-blue-600" />
@@ -578,9 +580,9 @@ export default function Unlock() {
                   <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
                   <div className="flex-1 blur-sm">
                     <p className="text-sm text-gray-900">
-                      Movimentação detectada
+                      {t("unlock.movementDetected")}
                     </p>
-                    <p className="text-xs text-gray-500">Há 23 minutos</p>
+                    <p className="text-xs text-gray-500">{t("unlock.minutesAgo", { minutes: 23 })}</p>
                   </div>
                   <Lock className="w-4 h-4 text-primary" />
                 </div>
@@ -593,32 +595,26 @@ export default function Unlock() {
             <CardContent className="p-6">
               <div className="text-center mb-4">
                 <h3 className="text-xl font-bold text-gray-900 mb-2">
-                  Desbloqueie o Acesso Completo
+                  {t("unlock.unlockTitle")}
                 </h3>
 
                 {/* Timer de Urgência */}
                 <div className="inline-flex items-center gap-2 bg-red-50 border border-red-200 px-3 py-1.5 rounded-full mb-3">
                   <AlertCircle className="w-4 h-4 text-red-600" />
                   <span className="text-sm font-semibold text-red-600">
-                    Os dados de localização expiram em{" "}
-                    <span className="font-mono text-base">
-                      {formatTimer(timeLeft)}
-                    </span>{" "}
-                    por motivos de segurança
+                    {t("unlock.expiresIn", { time: formatTimer(timeLeft) })}
                   </span>
                 </div>
 
                 <p className="text-gray-600 text-sm">
-                  Veja o endereço exato, coordenadas GPS e histórico de
-                  localização em tempo real
+                  {t("unlock.unlockDesc")}
                 </p>
               </div>
 
               {/* Reserva de Slot */}
               <div className="mb-4 text-center">
                 <p className="text-xs text-gray-500 italic">
-                  Vaga de monitoramento reservada para este número por tempo
-                  limitado
+                  {t("unlock.slotReserved")}
                 </p>
               </div>
 
@@ -627,7 +623,7 @@ export default function Unlock() {
                 onClick={handleUnlock}
               >
                 <Lock className="w-5 h-5 mr-2" />
-                Desbloquear Localização Agora
+                {t("unlock.unlockButton")}
               </Button>
 
               {/* Gatilhos de Segurança */}
@@ -672,7 +668,7 @@ export default function Unlock() {
                   <div className="flex items-center gap-1">
                     <Lock className="w-3.5 h-3.5" />
                     <span className="font-semibold">
-                      Pagamento Seguro e Discreto
+                      {t("unlock.paymentSecure")}
                     </span>
                   </div>
                 </div>
@@ -682,11 +678,11 @@ export default function Unlock() {
               <div className="flex items-center justify-center gap-4 text-xs text-gray-500">
                 <div className="flex items-center gap-1">
                   <Shield className="w-3 h-3" />
-                  <span>Pagamento seguro</span>
+                  <span>{t("unlock.securePayment")}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <CheckCircle2 className="w-3 h-3" />
-                  <span>Acesso imediato</span>
+                  <span>{t("unlock.immediateAccess")}</span>
                 </div>
               </div>
             </CardContent>
@@ -696,29 +692,29 @@ export default function Unlock() {
           <Card className="border border-gray-200 rounded-2xl bg-white shadow-sm">
             <CardContent className="p-5">
               <h4 className="font-bold text-gray-900 mb-4 text-center">
-                O que você terá acesso:
+                {t("unlock.whatYouGet")}
               </h4>
               <div className="grid grid-cols-2 gap-3">
                 <div className="flex items-center gap-2 p-2 bg-emerald-50/50 rounded-lg border border-emerald-100">
                   <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
                   <span className="text-sm text-gray-700">
-                    Endereço completo
+                    {t("unlock.fullAddress")}
                   </span>
                 </div>
                 <div className="flex items-center gap-2 p-2 bg-emerald-50/50 rounded-lg border border-emerald-100">
                   <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
-                  <span className="text-sm text-gray-700">Coordenadas GPS</span>
+                  <span className="text-sm text-gray-700">{t("unlock.gpsCoordinates")}</span>
                 </div>
                 <div className="flex items-center gap-2 p-2 bg-emerald-50/50 rounded-lg border border-emerald-100">
                   <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
                   <span className="text-sm text-gray-700">
-                    Mapa em tempo real
+                    {t("unlock.realtimeMap")}
                   </span>
                 </div>
                 <div className="flex items-center gap-2 p-2 bg-emerald-50/50 rounded-lg border border-emerald-100">
                   <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
                   <span className="text-sm text-gray-700">
-                    Histórico completo
+                    {t("unlock.fullHistory")}
                   </span>
                 </div>
               </div>
@@ -755,11 +751,10 @@ export default function Unlock() {
               </svg>
             </div>
             <p className="text-sm text-gray-600">
-              <span className="font-semibold text-gray-900">+50.000</span>{" "}
-              números localizados este mês
+              {t("unlock.numbersLocated")}
             </p>
             <p className="text-xs text-gray-500 flex items-center justify-center gap-1">
-              <span>Avaliação média:</span>
+              <span>{t("unlock.averageRating")}</span>
               <span className="font-semibold text-yellow-500">4.8/5</span>
               <span className="text-yellow-400">⭐</span>
             </p>

@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { useLocation } from "wouter";
+import { useTranslation } from "react-i18next";
 import { CheckCircle2, Loader2, MapPin } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -32,23 +33,27 @@ interface Step {
 // FUNÇÃO PARA GERAR STEPS DINÂMICOS
 // ============================================
 
-const getSearchSteps = (region?: string, carrier?: string): Step[] => [
+const getSearchSteps = (
+  t: (key: string, options?: any) => string,
+  region?: string,
+  carrier?: string
+): Step[] => [
   {
-    text: "Conectando-se à estação base celular",
+    text: t("searching.connecting"),
     status: "pending",
     duration: 1500,
   },
   {
     text: carrier
-      ? `Operadora identificada: ${carrier}`
-      : "Identificando operadora de rede",
+      ? t("searching.carrierIdentified", { carrier })
+      : t("searching.identifying"),
     status: "pending",
     duration: 1500,
   },
   {
     text: region
-      ? `Triangulando posição em ${region}`
-      : "Triangulando posição GPS",
+      ? t("searching.triangulatingRegion", { region })
+      : t("searching.triangulating"),
     status: "pending",
     duration: 2000,
   },
@@ -59,9 +64,10 @@ const getSearchSteps = (region?: string, carrier?: string): Step[] => [
 // ============================================
 
 export default function Searching() {
+  const { t } = useTranslation();
   const [_, setLocation] = useLocation();
   const [progress, setProgress] = useState(0);
-  const [steps, setSteps] = useState<Step[]>(getSearchSteps());
+  const [steps, setSteps] = useState<Step[]>(getSearchSteps(t));
   const [phoneInfo, setPhoneInfo] = useState<PhoneInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -95,7 +101,7 @@ export default function Searching() {
 
       // ✨ ATUALIZAR STEPS COM DADOS REAIS
       setSteps((prevSteps) => {
-        const newSteps = getSearchSteps(data.data.region, data.data.carrier);
+        const newSteps = getSearchSteps(t, data.data.region, data.data.carrier);
         // Preservar o status atual dos steps
         return newSteps.map((step, idx) => ({
           ...step,
@@ -106,10 +112,10 @@ export default function Searching() {
       return data;
     } catch (err) {
       console.error("Error fetching phone info:", err);
-      setError("Não foi possível obter informações do telefone");
+      setError(t("searching.error"));
       return null;
     }
-  }, []);
+  }, [t]);
 
   // ============================================
   // ANIMAÇÃO DE PROGRESSO COM STEPS
@@ -120,7 +126,7 @@ export default function Searching() {
     let currentStepIndex = 0;
     let accumulatedTime = 0;
 
-    const initialSteps = getSearchSteps();
+    const initialSteps = getSearchSteps(t);
     const totalDuration = initialSteps.reduce(
       (sum, step) => sum + step.duration,
       0
@@ -185,7 +191,7 @@ export default function Searching() {
       isMounted = false;
       clearInterval(progressInterval);
     };
-  }, [phoneNumber, setLocation, fetchPhoneInfo]);
+  }, [phoneNumber, setLocation, fetchPhoneInfo, t]);
 
   // ============================================
   // MAPAS DINÂMICOS (baseado na região)
@@ -292,7 +298,7 @@ export default function Searching() {
             </div>
 
             <h2 className="text-gray-600 font-medium text-base mb-2">
-              Localizando o número
+              {t("searching.title")}
             </h2>
 
             {/* Phone number display */}
@@ -353,7 +359,7 @@ export default function Searching() {
                 className="h-2 bg-gray-100 [&>div]:bg-gradient-to-r [&>div]:from-[#00Cba9] [&>div]:to-[#00e0b8] [&>div]:transition-all [&>div]:duration-300"
               />
               <div className="flex justify-between text-xs text-gray-500">
-                <span>Analisando...</span>
+                <span>{t("searching.analyzing")}</span>
                 <span className="font-semibold">{Math.floor(progress)}%</span>
               </div>
             </div>

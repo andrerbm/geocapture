@@ -1,0 +1,142 @@
+{
+  "common": {
+    "appName": "GeoCapture",
+    "loading": "読み込み中...",
+    "error": "エラー",
+    "continue": "続ける",
+    "search": "検索",
+    "locate": "位置特定",
+    "country": "国",
+    "city": "都市",
+    "address": "住所",
+    "coordinates": "座標",
+    "operator": "通信事業者",
+    "timezone": "タイムゾーン",
+    "location": "位置情報",
+    "status": "ステータス",
+    "online": "オンライン",
+    "privacy": "プライバシーポリシー",
+    "terms": "利用規約",
+    "copyright": "Copyright © 2025 GeoCapture.",
+    "allRightsReserved": "All rights reserved."
+  },
+  "nav": {
+    "title": "GeoCapture"
+  },
+  "hero": {
+    "title": "ワンクリックで電話番号の現在地を確認",
+    "subtitle": "追跡したい電話番号を入力してください",
+    "users": "2,500万人以上のユーザー",
+    "trusted": "が利用しています",
+    "ios": "iOS",
+    "android": "Android",
+    "allDevices": "すべてのデバイス対応",
+    "anyNetwork": "あらゆる通信網に対応",
+    "searchPlaceholder": "国を検索...",
+    "noCountryFound": "国が見つかりませんでした",
+    "available": "追跡可能",
+    "invalid": "形式が正しくありません",
+    "confidential": "完全非公開",
+    "sslSecure": "SSLで保護"
+  },
+  "features": {
+    "title": "確認できる内容",
+    "realtimeLocation": "リアルタイム位置情報",
+    "locationHistory": "移動履歴",
+    "locationAlerts": "位置情報アラート",
+    "arSearch": "AR検索",
+    "sosButton": "SOSボタン",
+    "fallDetection": "転倒検知",
+    "collisionControl": "衝突・速度アラート",
+    "wearables": "ウェアラブル連携"
+  },
+  "technologies": {
+    "title": "使用技術",
+    "gpsTracking": "高精度GPSトラッキング",
+    "gpsDesc": "高度な位置特定技術を使用",
+    "mlAlgorithms": "最新の機械学習アルゴリズム",
+    "mlDesc": "（ML）",
+    "iotDevices": "幅広いデバイスに対応",
+    "iotDesc": "IoT対応",
+    "tryNow": "今すぐGeoCaptureを試す"
+  },
+  "testimonials": {
+    "title": "メディア掲載",
+    "quote": "The Vergeは、GeoCaptureが大切な人の安全を守り、居場所を把握し、必要に応じて支援につなげるのに役立つと報じています。"
+  },
+  "howItWorks": {
+    "title": "使い方",
+    "step1Title": "番号を入力",
+    "step1Desc": "確認したい電話番号を入力してください。入力情報は非公開で、第三者に共有されません。",
+    "step2Title": "リクエストを送信",
+    "step2Desc": "相手に、位置情報の共有に同意するためのSMSが届きます。共有は任意です。",
+    "step3Title": "位置情報を受信",
+    "step3Desc": "地図上で現在地を確認できる通知が届きます。"
+  },
+  "reviews": {
+    "title": "2,500万人以上のユーザー",
+    "subtitle": "が利用しています",
+    "availableOn": "配信先",
+    "appStore": "App Store",
+    "googlePlay": "Google Play",
+    "review1Name": "Kevin Peters",
+    "review1Role": "最高のアプリ",
+    "review1Desc": "忙しいティーンの見守りに本当に助かっています！",
+    "review2Name": "John Lee",
+    "review2Role": "Android・iPhoneどちらもOK",
+    "review2Desc": "軽度の認知症です。将来、家族の助けになると思います。",
+    "review3Name": "Megan Smith",
+    "review3Role": "めちゃくちゃ便利！",
+    "review3Desc": "移動ルート上の各ポイントで住所まで表示されるのがすごいです！",
+    "verified": "認証済み"
+  },
+  "footer": {
+    "title": "位置情報を検索",
+    "subtitle": "電話番号から",
+    "description": "追跡したい電話番号を入力してください"
+  },
+  "searching": {
+    "title": "番号を確認中",
+    "connecting": "基地局ネットワークに接続中",
+    "identifying": "通信事業者を確認中",
+    "carrierIdentified": "通信事業者: {{carrier}}",
+    "triangulating": "GPS位置を推定中",
+    "triangulatingRegion": "{{region}}付近の位置を推定中",
+    "analyzing": "解析中...",
+    "error": "電話番号情報を取得できませんでした",
+    "loadingMap": "地図を読み込み中..."
+  },
+  "result": {
+    "title": "電話番号を特定しました！",
+    "defined": "確認済み"
+  },
+  "unlock": {
+    "gpsActive": "GPS信号：有効（追跡可能）",
+    "numberLocated": "電話番号を特定しました！",
+    "deviceStatus": "デバイス情報",
+    "lastActivity": "最終アクティビティ",
+    "locationUpdated": "位置情報を更新しました",
+    "dataConnection": "データ通信：オンライン",
+    "movementDetected": "移動を検知しました",
+    "minutesAgo": "{{minutes}}分前",
+    "unlockTitle": "フルアクセスを解除",
+    "expiresIn": "⚠ セキュリティ保護のため、位置情報は{{time}}後に無効になります",
+    "unlockDesc": "正確な住所・GPS座標・リアルタイムの位置履歴を表示します",
+    "slotReserved": "この番号の監視枠は、一定時間のみ確保されています",
+    "unlockButton": "今すぐ位置情報を表示",
+    "unlockNow": "今すぐ解除",
+    "deviceIdentified": "デバイスは{{city}}（{{region}}）付近で検出されました",
+    "paymentSecure": "安全・匿名で支払い可能",
+    "securePayment": "安全な支払い",
+    "immediateAccess": "すぐに利用開始",
+    "whatYouGet": "この操作で確認できる内容：",
+    "fullAddress": "住所（詳細）",
+    "gpsCoordinates": "GPS座標",
+    "realtimeMap": "リアルタイムマップ",
+    "fullHistory": "履歴（全期間）",
+    "numbersLocated": "今月は50,000件以上の番号を特定",
+    "averageRating": "平均評価:",
+    "socialProof": "{{name}}さんが{{city}}で番号を特定しました",
+    "locationFound": "📍位置情報を検出しました"
+  }
+}

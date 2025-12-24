@@ -1,4 +1,5 @@
 import { CountryCode } from "libphonenumber-js";
+import { useTranslation } from "react-i18next";
 import PhoneInput from "./PhoneInput";
 
 interface Country {
@@ -31,6 +32,8 @@ export default function HeroSection({
   currentDigits,
   maxDigits,
 }: HeroSectionProps) {
+  const { t } = useTranslation();
+
   return (
     <section className="container mx-auto px-4 py-6 md:py-10 grid md:grid-cols-2 gap-8 md:gap-10 items-center max-w-6xl">
       <div className="space-y-4">
@@ -44,10 +47,10 @@ export default function HeroSection({
             />
             <div className="flex flex-col">
               <span className="text-emerald-500 font-bold text-lg md:text-xl leading-tight">
-                Mais de 25 milhões de usuários
+                {t("hero.users")}
               </span>
               <span className="text-gray-400 text-xs md:text-sm font-medium">
-                confiaram em nós
+                {t("hero.trusted")}
               </span>
             </div>
             <img
@@ -61,10 +64,10 @@ export default function HeroSection({
         {/* Main Headline */}
         <div className="text-center space-y-2">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight tracking-tight">
-            Rastreie qualquer celular pelo número com apenas um clique
+            {t("hero.title")}
           </h1>
           <p className="text-gray-500 text-sm md:text-base pt-1">
-            Digite o número que deseja rastrear
+            {t("hero.subtitle")}
           </p>
 
           {/* Device Pills */}
@@ -76,7 +79,7 @@ export default function HeroSection({
               >
                 <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 52.3-11.4 69.5-34.3z" />
               </svg>
-              iOS
+              {t("hero.ios")}
             </div>
             <div className="flex items-center gap-1 md:gap-1.5 px-2 md:px-3 py-1 md:py-1.5 rounded-full border border-gray-300 bg-white text-gray-700 text-[10px] md:text-xs whitespace-nowrap">
               <svg
@@ -85,7 +88,7 @@ export default function HeroSection({
               >
                 <path d="M420.55,301.93a24,24,0,1,1,24-24,24,24,0,0,1-24,24m-265.1,0a24,24,0,1,1,24-24,24,24,0,0,1-24,24m273.7-144.48,47.94-83a10,10,0,1,0-17.27-10l-48.54,84.07a288.8,288.8,0,0,0-246.56,0l-48.54-84.07a10,10,0,1,0-17.27,10l47.94,83C64.53,202.22,8.24,285.55,0,384H576c-8.24-98.45-64.54-181.78-146.85-226.55" />
               </svg>
-              Android
+              {t("hero.android")}
             </div>
             <div className="flex items-center gap-1 md:gap-1.5 px-2 md:px-3 py-1 md:py-1.5 rounded-full border border-gray-300 bg-white text-gray-700 text-[10px] md:text-xs">
               <svg
@@ -103,11 +106,11 @@ export default function HeroSection({
               </svg>
               <span className="text-center leading-tight">
                 <span className="md:hidden">
-                  Todos os
+                  {t("hero.allDevices").split(" ")[0]}
                   <br />
-                  dispositivos
+                  {t("hero.allDevices").split(" ").slice(1).join(" ")}
                 </span>
-                <span className="hidden md:inline">Todos os dispositivos</span>
+                <span className="hidden md:inline">{t("hero.allDevices")}</span>
               </span>
             </div>
             <div className="flex items-center gap-1 md:gap-1.5 px-2 md:px-3 py-1 md:py-1.5 rounded-full border border-gray-300 bg-white text-gray-700 text-[10px] md:text-xs">
@@ -126,11 +129,11 @@ export default function HeroSection({
               </svg>
               <span className="text-center leading-tight">
                 <span className="md:hidden">
-                  Qualquer
+                  {t("hero.anyNetwork").split(" ")[0]}
                   <br />
-                  rede
+                  {t("hero.anyNetwork").split(" ").slice(1).join(" ")}
                 </span>
-                <span className="hidden md:inline">Qualquer rede</span>
+                <span className="hidden md:inline">{t("hero.anyNetwork")}</span>
               </span>
             </div>
           </div>
