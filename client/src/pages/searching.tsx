@@ -124,13 +124,14 @@ export default function Searching() {
   useEffect(() => {
     let isMounted = true;
     let currentStepIndex = 0;
-    let accumulatedTime = 0;
-
+    
     const initialSteps = getSearchSteps(t);
     const totalDuration = initialSteps.reduce(
       (sum, step) => sum + step.duration,
       0
     );
+    
+    const startTime = Date.now();
 
     // Buscar info do telefone em paralelo
     fetchPhoneInfo(phoneNumber);
@@ -146,29 +147,27 @@ export default function Searching() {
     const progressInterval = setInterval(() => {
       if (!isMounted) return;
 
-      setProgress((prev) => {
-        const newProgress = prev + (100 / totalDuration) * 50;
+      const elapsed = Date.now() - startTime;
+      const newProgress = Math.min((elapsed / totalDuration) * 100, 100);
 
-        if (newProgress >= 100) {
-          clearInterval(progressInterval);
-          setTimeout(() => {
-            if (isMounted) {
-              setLocation(`/result?phone=${encodeURIComponent(phoneNumber)}`);
-            }
-          }, 500);
-          return 100;
-        }
+      setProgress(newProgress);
 
-        return newProgress;
-      });
+      if (newProgress >= 100) {
+        clearInterval(progressInterval);
+        setTimeout(() => {
+          if (isMounted) {
+            setLocation(`/result?phone=${encodeURIComponent(phoneNumber)}`);
+          }
+        }, 300);
+        return;
+      }
 
-      accumulatedTime += 50;
-
+      // Atualizar steps baseado no tempo decorrido
       let stepTime = 0;
       for (let i = 0; i < initialSteps.length; i++) {
         stepTime += initialSteps[i].duration;
 
-        if (accumulatedTime >= stepTime && currentStepIndex === i) {
+        if (elapsed >= stepTime && currentStepIndex === i) {
           currentStepIndex = i + 1;
 
           setSteps((prevSteps) =>
@@ -185,7 +184,7 @@ export default function Searching() {
           break;
         }
       }
-    }, 50);
+    }, 30);
 
     return () => {
       isMounted = false;
