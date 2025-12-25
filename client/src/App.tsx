@@ -8,7 +8,6 @@ import Home from "@/pages/home";
 import Searching from "@/pages/searching";
 import Result from "@/pages/result";
 import Unlock from "@/pages/unlock";
-import "./lib/i18n";
 
 function Router() {
   return (
