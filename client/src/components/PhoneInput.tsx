@@ -1,6 +1,6 @@
 import { useMemo, useCallback, memo, useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { ShieldCheck, Lock, Search, ChevronDown } from "lucide-react";
+import { ShieldCheck, Zap, Search, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -248,6 +248,7 @@ export default function PhoneInputOptimized({
 }: PhoneInputProps) {
   const { t } = useTranslation();
   const isHero = variant === "hero";
+  const [error, setError] = useState("");
 
   // ✅ OTIMIZAÇÃO 4: Cache do país selecionado
   const selectedCountryData = useMemo(
@@ -255,15 +256,33 @@ export default function PhoneInputOptimized({
     [selectedCountry, countries]
   );
 
+  // ✅ Validação e busca
+  const handleSearch = useCallback(() => {
+    if (!phoneNumber.trim()) {
+      setError(t("hero.enterPhone") || "Por favor, digite um número de telefone");
+      setTimeout(() => setError(""), 3000);
+      return;
+    }
+
+    if (!isValid) {
+      setError(t("hero.invalid") || "Número de telefone inválido");
+      setTimeout(() => setError(""), 3000);
+      return;
+    }
+
+    setError("");
+    onSearch();
+  }, [phoneNumber, isValid, onSearch, t]);
+
   // ✅ OTIMIZAÇÃO 5: Estabilizar handlers
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === "Enter" && isValid) {
+      if (e.key === "Enter") {
         e.preventDefault();
-        onSearch();
+        handleSearch();
       }
     },
-    [isValid, onSearch]
+    [handleSearch]
   );
 
   // ✅ OTIMIZAÇÃO 6: Cache de classes CSS
@@ -300,7 +319,7 @@ export default function PhoneInputOptimized({
           </span>
         </div>
         <div className="flex-1 flex items-center justify-center gap-2 bg-[#e8f7f3] py-3 rounded-lg">
-          <Lock className="h-4 w-4 text-[#5bb59a]" />
+          <Zap className="h-4 w-4 text-[#5bb59a]" />
           <span className="text-[#5bb59a] text-xs font-bold">
             {t("hero.sslSecure")}
           </span>
@@ -318,7 +337,7 @@ export default function PhoneInputOptimized({
           {t("hero.confidential")}
         </span>
         <span className="flex items-center gap-1.5">
-          <Lock className="h-4 w-4 text-primary" /> {t("hero.sslSecure")}
+          <Zap className="h-4 w-4 text-primary" /> {t("hero.sslSecure")}
         </span>
       </div>
     ),
@@ -330,6 +349,16 @@ export default function PhoneInputOptimized({
 
   return (
     <div className={containerClasses}>
+      {/* Error Message */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-2.5 rounded-lg text-sm font-medium flex items-center gap-2 animate-in slide-in-from-top mb-2">
+          <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+          </svg>
+          {error}
+        </div>
+      )}
+
       {/* Status indicator - memoizado */}
       {shouldShowStatus && (
         <StatusIndicator
@@ -378,8 +407,7 @@ export default function PhoneInputOptimized({
       <Button
         className="w-full h-14 text-lg md:text-xl font-bold rounded-xl shadow-lg shadow-[#00Cba9]/30 text-white transition-all duration-300 bg-[#00Cba9] hover:bg-[#00b596] active:scale-[0.98]"
         size="lg"
-        onClick={onSearch}
-        disabled={!isValid}
+        onClick={handleSearch}
       >
         {t("common.locate")}
       </Button>

@@ -24,7 +24,7 @@
     "title": "GeoCapture"
   },
   "hero": {
-    "title": "Suivez n'importe quel téléphone par numéro en un seul clic",
+    "title": "Découvrez l'emplacement exact de n'importe quel numéro en quelques minutes",
     "subtitle": "Entrez le numéro que vous souhaitez suivre",
     "users": "Plus de 25 millions d'utilisateurs",
     "trusted": "nous ont fait confiance",
@@ -35,12 +35,26 @@
     "searchPlaceholder": "Rechercher un pays...",
     "noCountryFound": "Aucun pays trouvé",
     "available": "Disponible pour le suivi",
-    "invalid": "Format invalide",
+    "invalid": "Numéro de téléphone invalide",
+    "enterPhone": "Veuillez entrer un numéro de téléphone",
     "confidential": "100% Confidentiel",
-    "sslSecure": "SSL Sécurisé"
+    "sslSecure": "Sans Installation"
+  },
+  "dashboard": {
+    "title": "Voyez exactement ce que vous recevrez",
+    "subtitle": "Interface complète et intuitive avec toutes les données de localisation en temps réel",
+    "badge": "En temps réel",
+    "feature1Title": "Carte interactive avec localisation précise",
+    "feature1Desc": "Visualisez l'emplacement exact sur une carte interactive avec des coordonnées GPS détaillées et une précision jusqu'à 20 mètres",
+    "feature2Title": "Chronologie complète des activités",
+    "feature2Desc": "Suivez tous les événements : quand le lien a été consulté, SMS envoyé et localisation capturée avec horodatages précis",
+    "feature3Title": "Informations détaillées sur l'appareil",
+    "feature3Desc": "Découvrez le modèle de l'appareil, le système d'exploitation, la langue et la résolution d'écran du dispositif suivi",
+    "feature4Title": "Adresse complète et détaillée",
+    "feature4Desc": "Obtenez l'adresse complète incluant la rue, le quartier, la ville, l'état et la région géographique de l'emplacement"
   },
   "features": {
-    "title": "Ce que vous obtiendrez",
+    "title": "À quoi vous aurez accès",
     "realtimeLocation": "Localisation en temps réel",
     "locationHistory": "Historique des localisations",
     "locationAlerts": "Alertes de localisation",
@@ -66,16 +80,20 @@
   },
   "howItWorks": {
     "title": "Comment ça fonctionne",
-    "step1Title": "Vérifier le numéro",
-    "step1Desc": "Entrez le numéro de téléphone que vous souhaitez vérifier. Ces informations sont privées et inaccessibles aux tiers.",
-    "step2Title": "Envoyer la demande",
-    "step2Desc": "Le destinataire reçoit un SMS pour consentir au partage de sa localisation. Le partage est optionnel.",
-    "step3Title": "Recevoir la localisation",
-    "step3Desc": "Vous serez notifié pour visualiser la localisation exacte sur une carte."
+    "subtitle": "Trois étapes simples pour localiser n'importe quel numéro",
+    "step1Title": "Entrez le numéro",
+    "step1Desc": "Entrez le numéro de téléphone que vous souhaitez localiser. Vos informations sont privées et sécurisées.",
+    "step2Title": "Attendez la recherche",
+    "step2Desc": "Notre système combine GPS, Wi-Fi et tours de téléphonie cellulaire pour trouver l'emplacement exact.",
+    "step3Title": "Voir sur la carte",
+    "step3Desc": "Recevez l'emplacement précis avec l'adresse complète directement sur votre appareil."
   },
   "reviews": {
     "title": "Plus de 25 millions d'utilisateurs",
     "subtitle": "nous ont fait confiance",
+    "rating": "4.8 sur 5",
+    "totalReviews": "basé sur 12 847 avis",
+    "locationsToday": "+3 200 localisations effectuées au cours des dernières 24h",
     "availableOn": "Disponible sur",
     "appStore": "App Store",
     "googlePlay": "Google Play",
@@ -89,6 +107,27 @@
     "review3Role": "Super utile !",
     "review3Desc": "Afficher les adresses physiques à chaque point de suivi le long d'un itinéraire est impressionnant !",
     "verified": "Vérifié"
+  },
+  "keyQuestions": {
+    "title": "Avant de continuer, vous devez savoir :",
+    "question1": "Est-il légal d'utiliser ce service ?",
+    "answer1": "Oui ! Le suivi est 100% légal lorsqu'il est utilisé à des fins légitimes telles que la protection des mineurs, la sécurité familiale ou la récupération de vos propres appareils.",
+    "question2": "La personne est-elle notifiée ?",
+    "answer2": "Non ! Notre méthode est complètement discrète et imperceptible. La personne surveillée ne reçoit aucune notification ou alerte."
+  },
+  "faq": {
+    "title": "Questions Fréquentes",
+    "subtitle": "Clarifiez vos doutes avant de commencer",
+    "question1": "Y a-t-il un risque que la personne découvre qu'elle est suivie ?",
+    "answer1": "Non ! Notre méthode est imperceptible pour ceux qui sont surveillés. Vous pouvez être tranquille, la personne ne saura jamais qu'elle a été suivie.",
+    "question2": "Ai-je besoin d'accéder au téléphone de la personne ?",
+    "answer2": "Non, vous n'avez pas besoin d'accès au téléphone. Notre système n'a besoin que du numéro de téléphone pour effectuer le suivi.",
+    "question3": "Le montant est-il facturé mensuellement ?",
+    "answer3": "Non ! Nous sommes le seul au Brésil qui offre un accès à vie. Vous payez une fois et vous n'aurez plus jamais besoin d'effectuer de paiement.",
+    "question4": "Quel est le prix et les méthodes de paiement ?",
+    "answer4": "La méthode est en offre exclusive pour seulement 97€ au comptant ou 12x de 8,08€. Nous acceptons la carte, le billet et PIX.",
+    "question5": "Cela fonctionne-t-il dans n'importe quel pays ?",
+    "answer5": "Oui ! Notre technologie fonctionne dans le monde entier, dans n'importe quel pays du monde, avec n'importe quel opérateur téléphonique."
   },
   "footer": {
     "title": "Trouver la Localisation",

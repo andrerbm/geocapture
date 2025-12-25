@@ -5,7 +5,7 @@
     "error": "Erro",
     "continue": "Continuar",
     "search": "Buscar",
-    "locate": "Localizar",
+    "locate": "Localizar Agora",
     "country": "País",
     "city": "Cidade",
     "address": "Endereço",
@@ -24,7 +24,7 @@
     "title": "GeoCapture"
   },
   "hero": {
-    "title": "Rastreie qualquer celular pelo número com apenas um clique",
+    "title": "Descubra a localização exata de qualquer número em minutos",
     "subtitle": "Digite o número que deseja rastrear",
     "users": "Mais de 25 milhões de usuários",
     "trusted": "confiaram em nós",
@@ -35,12 +35,66 @@
     "searchPlaceholder": "Buscar país...",
     "noCountryFound": "Nenhum país encontrado",
     "available": "Disponível para rastreamento",
-    "invalid": "Formato inválido",
+    "invalid": "Número de telefone inválido",
+    "enterPhone": "Por favor, digite um número de telefone",
     "confidential": "100% Confidencial",
-    "sslSecure": "SSL Seguro"
+    "sslSecure": "Sem Instalação"
+  },
+  "targetAudience": {
+    "title": "Para quem é indicado?",
+    "subtitle": "Descubra como milhares de pessoas já resolveram seus problemas",
+    "card1": {
+      "question": "Suspeita de traição?",
+      "description": "Descubra a verdade sobre onde seu parceiro realmente está",
+      "cta": "A solução está aqui →"
+    },
+    "card2": {
+      "question": "Preocupado com seus filhos?",
+      "description": "Saiba onde eles estão a qualquer momento do dia",
+      "cta": "A solução está aqui →"
+    },
+    "card3": {
+      "question": "Perdeu seu celular?",
+      "description": "Encontre seu aparelho mesmo desligado ou sem internet",
+      "cta": "A solução está aqui →"
+    },
+    "card4": {
+      "question": "Precisa localizar alguém?",
+      "description": "Encontre a pessoa que você procura de forma discreta",
+      "cta": "A solução está aqui →"
+    }
+  },
+  "whyChoose": {
+    "title": "Por que escolher o GeoCapture?",
+    "subtitle": "Tecnologia avançada com simplicidade de uso",
+    "card1": {
+      "title": "Nenhum aplicativo necessário",
+      "description": "Você não precisa instalar nada. Basta digitar um número e o sistema faz o trabalho."
+    },
+    "card2": {
+      "title": "Completamente confidencial",
+      "description": "Quem estiver com o telefone não saberá que está sendo rastreado. Total sigilo."
+    },
+    "card3": {
+      "title": "Todos os modelos e operadoras",
+      "description": "Funciona com qualquer telefone, iOS ou Android, em qualquer operadora do mundo."
+    }
+  },
+  "dashboard": {
+    "title": "Veja exatamente o que você receberá",
+    "subtitle": "Interface completa e intuitiva com todos os dados de localização em tempo real",
+    "badge": "Em tempo real",
+    "feature1Title": "Mapa interativo com localização precisa",
+    "feature1Desc": "Visualize a localização exata em um mapa interativo com coordenadas GPS detalhadas e precisão de até 20 metros",
+    "feature2Title": "Linha do tempo completa de atividades",
+    "feature2Desc": "Acompanhe todos os eventos: quando o link foi acessado, SMS enviado e localização capturada com horários precisos",
+    "feature3Title": "Informações detalhadas do dispositivo",
+    "feature3Desc": "Descubra o modelo do aparelho, sistema operacional, idioma e resolução de tela do dispositivo rastreado",
+    "feature4Title": "Endereço completo e detalhado",
+    "feature4Desc": "Receba o endereço completo incluindo rua, bairro, cidade, estado e região geográfica da localização"
   },
   "features": {
-    "title": "O que ganhará",
+    "title": "O que terá acesso",
     "realtimeLocation": "Localização em tempo real",
     "locationHistory": "Histórico de localização",
     "locationAlerts": "Alertas de local",
@@ -65,17 +119,21 @@
     "quote": "O Verge relata que GeoCapture ajudará você a manter seus entes queridos seguros, sabendo onde eles estão e ajudando-os se necessário."
   },
   "howItWorks": {
-    "title": "Como Funciona",
-    "step1Title": "Verificar o número",
-    "step1Desc": "Insira o número de telefone que deseja verificar. Essas informações são privadas e inacessíveis a terceiros.",
-    "step2Title": "Enviar solicitação",
-    "step2Desc": "O destinatário recebe um SMS para consentir com sua localização. O compartilhamento é opcional.",
-    "step3Title": "Receber a localização",
-    "step3Desc": "Você será notificado para visualizar a localização exata em um mapa."
+    "title": "Como funciona",
+    "subtitle": "Três passos simples para localizar qualquer número",
+    "step1Title": "Digite o número",
+    "step1Desc": "Insira o número de telefone que deseja localizar. Suas informações são privadas e seguras.",
+    "step2Title": "Aguarde a busca",
+    "step2Desc": "Nosso sistema combina GPS, Wi-Fi e torres de celular para encontrar a localização exata.",
+    "step3Title": "Veja no mapa",
+    "step3Desc": "Receba a localização precisa com endereço completo diretamente no seu dispositivo."
   },
   "reviews": {
     "title": "Mais de 25 milhões de usuários",
     "subtitle": "confiaram em nós",
+    "rating": "4.8 de 5",
+    "totalReviews": "com base em 12.847 avaliações",
+    "locationsToday": "+3.200 localizações realizadas nas últimas 24h",
     "availableOn": "Disponível na",
     "appStore": "App Store",
     "googlePlay": "Google Play",
@@ -89,6 +147,27 @@
     "review3Role": "Super útil!",
     "review3Desc": "Exibir endereços físicos em cada ponto de rastreamento ao longo de uma rota é impressionante!",
     "verified": "Verificado"
+  },
+  "keyQuestions": {
+    "title": "Antes de continuar, você precisa saber:",
+    "question1": "É legal usar este serviço?",
+    "answer1": "Sim! O rastreamento é 100% legal quando usado para fins legítimos como proteção de menores, segurança familiar ou recuperação de dispositivos próprios.",
+    "question2": "A pessoa é notificada?",
+    "answer2": "Não! Nosso método é completamente discreto e imperceptível. Quem está sendo monitorado não recebe nenhuma notificação ou alerta."
+  },
+  "faq": {
+    "title": "Perguntas Frequentes",
+    "subtitle": "Tire suas dúvidas antes de começar",
+    "question1": "Tem perigo da pessoa descobrir que está sendo rastreada?",
+    "answer1": "Não! Nosso método é imperceptível para quem está sendo monitorado. Pode ficar tranquilo, a pessoa nunca saberá que foi rastreada.",
+    "question2": "Preciso ter acesso ao celular da pessoa?",
+    "answer2": "Não, você não precisa de acesso ao telefone. Nosso sistema precisa apenas do número de telefone para realizar o rastreamento.",
+    "question3": "O valor é cobrado mensalmente?",
+    "answer3": "Não! Somos o único do Brasil que oferece acesso vitalício. Você paga uma vez e nunca mais precisa efetuar nenhum pagamento.",
+    "question4": "Qual o valor e formas de pagamento?",
+    "answer4": "O método está em oferta exclusiva por apenas R$ 97 à vista ou 12x de R$ 8,08. Aceitamos cartão, boleto e PIX.",
+    "question5": "Funciona em qualquer país?",
+    "answer5": "Sim! Nossa tecnologia funciona globalmente, em qualquer país do mundo, com qualquer operadora de telefonia."
   },
   "footer": {
     "title": "Encontrar Localização",

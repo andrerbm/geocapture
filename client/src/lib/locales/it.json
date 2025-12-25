@@ -24,7 +24,7 @@
     "title": "GeoCapture"
   },
   "hero": {
-    "title": "Traccia qualsiasi telefono per numero con un solo clic",
+    "title": "Scopri la posizione esatta di qualsiasi numero in pochi minuti",
     "subtitle": "Inserisci il numero che desideri tracciare",
     "users": "Più di 25 milioni di utenti",
     "trusted": "si sono fidati di noi",
@@ -35,12 +35,26 @@
     "searchPlaceholder": "Cerca paese...",
     "noCountryFound": "Nessun paese trovato",
     "available": "Disponibile per il tracciamento",
-    "invalid": "Formato non valido",
+    "invalid": "Numero di telefono non valido",
+    "enterPhone": "Per favore, inserisci un numero di telefono",
     "confidential": "100% Confidenziale",
-    "sslSecure": "SSL Sicuro"
+    "sslSecure": "Senza Installazione"
+  },
+  "dashboard": {
+    "title": "Vedi esattamente cosa riceverai",
+    "subtitle": "Interfaccia completa e intuitiva con tutti i dati di localizzazione in tempo reale",
+    "badge": "In tempo reale",
+    "feature1Title": "Mappa interattiva con posizione precisa",
+    "feature1Desc": "Visualizza la posizione esatta su una mappa interattiva con coordinate GPS dettagliate e precisione fino a 20 metri",
+    "feature2Title": "Timeline completa delle attività",
+    "feature2Desc": "Segui tutti gli eventi: quando il link è stato consultato, SMS inviato e posizione acquisita con timestamp precisi",
+    "feature3Title": "Informazioni dettagliate sul dispositivo",
+    "feature3Desc": "Scopri il modello del dispositivo, sistema operativo, lingua e risoluzione dello schermo del dispositivo tracciato",
+    "feature4Title": "Indirizzo completo e dettagliato",
+    "feature4Desc": "Ottieni l'indirizzo completo inclusi via, quartiere, città, stato e regione geografica della posizione"
   },
   "features": {
-    "title": "Cosa otterrai",
+    "title": "A cosa avrai accesso",
     "realtimeLocation": "Posizione in tempo reale",
     "locationHistory": "Cronologia delle posizioni",
     "locationAlerts": "Avvisi di posizione",
@@ -66,16 +80,20 @@
   },
   "howItWorks": {
     "title": "Come Funziona",
-    "step1Title": "Verifica il numero",
-    "step1Desc": "Inserisci il numero di telefono che desideri verificare. Queste informazioni sono private e inaccessibili a terze parti.",
-    "step2Title": "Invia richiesta",
-    "step2Desc": "Il destinatario riceve un SMS per consentire la condivisione della sua posizione. La condivisione è opzionale.",
-    "step3Title": "Ricevi posizione",
-    "step3Desc": "Riceverai una notifica per visualizzare la posizione esatta su una mappa."
+    "subtitle": "Tre semplici passaggi per localizzare qualsiasi numero",
+    "step1Title": "Inserisci il numero",
+    "step1Desc": "Inserisci il numero di telefono che desideri localizzare. Le tue informazioni sono private e sicure.",
+    "step2Title": "Attendi la ricerca",
+    "step2Desc": "Il nostro sistema combina GPS, Wi-Fi e torri cellulari per trovare la posizione esatta.",
+    "step3Title": "Vedi sulla mappa",
+    "step3Desc": "Ricevi la posizione precisa con indirizzo completo direttamente sul tuo dispositivo."
   },
   "reviews": {
     "title": "Più di 25 milioni di utenti",
     "subtitle": "si sono fidati di noi",
+    "rating": "4.8 su 5",
+    "totalReviews": "basato su 12.847 recensioni",
+    "locationsToday": "+3.200 posizioni tracciate nelle ultime 24h",
     "availableOn": "Disponibile su",
     "appStore": "App Store",
     "googlePlay": "Google Play",
@@ -89,6 +107,27 @@
     "review3Role": "Super utile!",
     "review3Desc": "Visualizzare gli indirizzi fisici in ogni punto di tracciamento lungo un percorso è impressionante!",
     "verified": "Verificato"
+  },
+  "keyQuestions": {
+    "title": "Prima di continuare, devi sapere:",
+    "question1": "È legale utilizzare questo servizio?",
+    "answer1": "Sì! Il tracciamento è 100% legale quando utilizzato per scopi legittimi come la protezione dei minori, la sicurezza familiare o il recupero dei propri dispositivi.",
+    "question2": "La persona viene notificata?",
+    "answer2": "No! Il nostro metodo è completamente discreto e impercettibile. La persona monitorata non riceve alcuna notifica o avviso."
+  },
+  "faq": {
+    "title": "Domande Frequenti",
+    "subtitle": "Chiarisci i tuoi dubbi prima di iniziare",
+    "question1": "C'è il rischio che la persona scopra di essere tracciata?",
+    "answer1": "No! Il nostro metodo è impercettibile per chi viene monitorato. Puoi stare tranquillo, la persona non saprà mai di essere stata tracciata.",
+    "question2": "Devo avere accesso al telefono della persona?",
+    "answer2": "No, non hai bisogno di accesso al telefono. Il nostro sistema ha bisogno solo del numero di telefono per effettuare il tracciamento.",
+    "question3": "Il costo è addebitato mensilmente?",
+    "answer3": "No! Siamo l'unico in Brasile che offre accesso a vita. Paghi una volta e non dovrai mai più effettuare alcun pagamento.",
+    "question4": "Qual è il prezzo e le modalità di pagamento?",
+    "answer4": "Il metodo è in offerta esclusiva per soli 97€ in contanti o 12x di 8,08€. Accettiamo carta, bollettino e PIX.",
+    "question5": "Funziona in qualsiasi paese?",
+    "answer5": "Sì! La nostra tecnologia funziona a livello globale, in qualsiasi paese del mondo, con qualsiasi operatore telefonico."
   },
   "footer": {
     "title": "Trova Posizione",

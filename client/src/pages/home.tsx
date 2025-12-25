@@ -17,10 +17,25 @@ import {
   Quote,
   Star,
   CheckCircle2,
+  HeartOff,
+  Smartphone,
+  Tablet,
+  Shield,
+  Globe,
 } from "lucide-react";
+import preciseGpsSvg from "@assets/precise_gps.svg";
+import modernMlSvg from "@assets/modern_ml.svg";
+import wideRangeSvg from "@assets/wide_range.svg";
+import dashboardPng from "@assets/dashboard.png";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import {
   AsYouType,
   parsePhoneNumber,
@@ -33,6 +48,7 @@ import examples from "libphonenumber-js/mobile/examples";
 import * as flags from "country-flag-icons/react/3x2";
 import HeroSection from "@/components/HeroSection";
 import PhoneInput from "@/components/PhoneInput";
+import StickyPhoneInput from "@/components/StickyPhoneInput";
 import LanguageSelector from "@/components/LanguageSelector";
 
 // =============================================================================
@@ -169,12 +185,12 @@ const formatPhoneNumber = (value: string, country: CountryCode): string => {
   try {
     // Se valor vazio, retornar vazio
     if (!value || value.trim() === "") return "";
-    
+
     const digitsOnly = value.replace(/\D/g, "");
-    
+
     // Se não há dígitos, retornar vazio
     if (!digitsOnly) return "";
-    
+
     const maxLength = getMaxLength(country);
     const limitedDigits = digitsOnly.slice(0, maxLength);
 
@@ -182,7 +198,7 @@ const formatPhoneNumber = (value: string, country: CountryCode): string => {
 
     const formatter = new AsYouType(country);
     const formatted = formatter.input(limitedDigits);
-    
+
     // Retornar valor formatado ou apenas dígitos se formatação falhar
     return formatted || limitedDigits;
   } catch {
@@ -232,7 +248,7 @@ function usePhoneField(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const inputValue = e.target.value;
       const previousFormatted = previousFormattedRef.current;
-      
+
       // Permitir deleção completa
       if (inputValue === "") {
         setValue("");
@@ -240,17 +256,17 @@ function usePhoneField(
         previousFormattedRef.current = "";
         return;
       }
-      
+
       // Extrair apenas dígitos do input atual e anterior
       const currentDigits = inputValue.replace(/\D/g, "");
       const previousDigits = previousDigitsRef.current;
-      
+
       // Detectar deleção: comprimento total menor OU menos dígitos
       // Isso detecta quando usuário deleta caracteres de formatação também
-      const isDeleting = 
-        inputValue.length < previousFormatted.length || 
+      const isDeleting =
+        inputValue.length < previousFormatted.length ||
         currentDigits.length < previousDigits.length;
-      
+
       if (isDeleting) {
         // Usuário está deletando - formatar APENAS os dígitos restantes
         // Isso permite deletar qualquer parte, incluindo DDD e caracteres de formatação
@@ -267,7 +283,7 @@ function usePhoneField(
         }
         return;
       }
-      
+
       // Se está adicionando ou igual, aplicar formatação normalmente
       const formatted = formatPhoneNumber(inputValue, country);
       setValue(formatted);
@@ -278,22 +294,28 @@ function usePhoneField(
     [country]
   );
 
-  const handleCountryChange = useCallback((newCountry: string) => {
-    setUserSelectedCountry(true); // Marcar que usuário selecionou manualmente
-    setCountry(newCountry as CountryCode);
-    // Reformatar o valor atual com o novo país
-    const digitsOnly = value.replace(/\D/g, "");
-    if (digitsOnly) {
-      const reformatted = formatPhoneNumber(digitsOnly, newCountry as CountryCode);
-      setValue(reformatted);
-      previousDigitsRef.current = digitsOnly;
-      previousFormattedRef.current = reformatted;
-    } else {
-      setValue("");
-      previousDigitsRef.current = "";
-      previousFormattedRef.current = "";
-    }
-  }, [value]);
+  const handleCountryChange = useCallback(
+    (newCountry: string) => {
+      setUserSelectedCountry(true); // Marcar que usuário selecionou manualmente
+      setCountry(newCountry as CountryCode);
+      // Reformatar o valor atual com o novo país
+      const digitsOnly = value.replace(/\D/g, "");
+      if (digitsOnly) {
+        const reformatted = formatPhoneNumber(
+          digitsOnly,
+          newCountry as CountryCode
+        );
+        setValue(reformatted);
+        previousDigitsRef.current = digitsOnly;
+        previousFormattedRef.current = reformatted;
+      } else {
+        setValue("");
+        previousDigitsRef.current = "";
+        previousFormattedRef.current = "";
+      }
+    },
+    [value]
+  );
 
   const isValid = isValidPhoneNumber(value, country);
   const digitCount = value.replace(/\D/g, "").length;
@@ -306,7 +328,7 @@ function usePhoneField(
       // Tentar parsear o número para garantir formato correto
       const digitsOnly = value.replace(/\D/g, "");
       const parsed = parsePhoneNumber(digitsOnly, country);
-      
+
       if (parsed && parsed.isValid()) {
         // Usar formato internacional do libphonenumber-js
         const fullNumber = parsed.formatInternational();
@@ -349,7 +371,8 @@ function usePhoneField(
 export default function Home() {
   const { t } = useTranslation();
   const [, setLocation] = useLocation();
-  const { countryCode: detectedCountry, isLoading: isDetectingCountry } = useCountryDetection();
+  const { countryCode: detectedCountry, isLoading: isDetectingCountry } =
+    useCountryDetection();
   const [defaultCountry, setDefaultCountry] = useState<CountryCode>("BR");
 
   // Atualizar país padrão quando a detecção for concluída
@@ -372,18 +395,22 @@ export default function Home() {
   // Footer phone field - usar país detectado ou BR como fallback
   const footerPhone = usePhoneField(defaultCountry, navigateToSearching);
 
+  // Sticky phone field - usar país detectado ou BR como fallback
+  const stickyPhone = usePhoneField(defaultCountry, navigateToSearching);
+
   return (
     <div className="min-h-screen bg-white font-sans overflow-x-hidden">
       {/* Navigation */}
-      <nav className="container mx-auto py-4 px-4 flex items-center justify-between">
+      <nav className="container mx-auto py-4 px-4 flex items-center justify-between max-w-6xl">
         <div className="text-primary font-bold text-xl tracking-tight flex items-center gap-1">
-          <MapPin className="fill-primary text-white h-6 w-6" /> {t("nav.title")}
+          <MapPin className="fill-primary text-white h-6 w-6" />{" "}
+          {t("nav.title")}
         </div>
         <LanguageSelector />
       </nav>
 
       {/* Divider Line */}
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 max-w-6xl">
         <div className="border-t border-gray-200"></div>
       </div>
 
@@ -400,69 +427,75 @@ export default function Home() {
         maxDigits={heroPhone.maxDigits}
       />
 
-      {/* Features Grid */}
-      <section className="py-12 bg-slate-50/50">
-        <div className="container mx-auto px-4">
-          <h2 className="text-2xl md:text-3xl font-bold text-center text-gray-900 mb-10">
-            {t("features.title")}
-          </h2>
+      {/* Target Audience Section */}
+      <section className="py-10 md:py-12 bg-white">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <div className="text-center mb-8 md:mb-10">
+            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">
+              {t("targetAudience.title")}
+            </h2>
+            <p className="text-gray-500 text-sm">
+              {t("targetAudience.subtitle")}
+            </p>
+          </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
               {
-                icon: MapPin,
-                title: t("features.realtimeLocation"),
-                color: "bg-cyan-50 text-cyan-600",
+                icon: HeartOff,
+                question: t("targetAudience.card1.question"),
+                description: t("targetAudience.card1.description"),
+                cta: t("targetAudience.card1.cta"),
+                iconColor: "bg-red-50 text-red-600",
               },
               {
-                icon: Activity,
-                title: t("features.locationHistory"),
-                color: "bg-blue-50 text-blue-600",
+                icon: Users,
+                question: t("targetAudience.card2.question"),
+                description: t("targetAudience.card2.description"),
+                cta: t("targetAudience.card2.cta"),
+                iconColor: "bg-emerald-50 text-emerald-600",
               },
               {
-                icon: Bell,
-                title: t("features.locationAlerts"),
-                color: "bg-emerald-50 text-emerald-600",
+                icon: Smartphone,
+                question: t("targetAudience.card3.question"),
+                description: t("targetAudience.card3.description"),
+                cta: t("targetAudience.card3.cta"),
+                iconColor: "bg-blue-50 text-blue-600",
               },
               {
                 icon: Search,
-                title: t("features.arSearch"),
-                color: "bg-purple-50 text-purple-600",
+                question: t("targetAudience.card4.question"),
+                description: t("targetAudience.card4.description"),
+                cta: t("targetAudience.card4.cta"),
+                iconColor: "bg-purple-50 text-purple-600",
               },
-              {
-                icon: Radio,
-                title: t("features.sosButton"),
-                color: "bg-red-50 text-red-600",
-              },
-              {
-                icon: HeartPulse,
-                title: t("features.fallDetection"),
-                color: "bg-pink-50 text-pink-600",
-              },
-              {
-                icon: Zap,
-                title: t("features.collisionControl"),
-                color: "bg-amber-50 text-amber-600",
-              },
-              {
-                icon: Watch,
-                title: t("features.wearables"),
-                color: "bg-indigo-50 text-indigo-600",
-              },
-            ].map((feature, i) => (
+            ].map((card, i) => (
               <Card
                 key={i}
-                className="border-0 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 bg-white rounded-2xl overflow-hidden group"
+                className="border-0 shadow-sm hover:shadow-lg transition-all duration-300 bg-gray-50 rounded-xl overflow-hidden group cursor-pointer"
               >
-                <CardContent className="p-6 flex flex-col items-center text-center gap-4 h-full justify-center">
+                <CardContent className="p-5 flex flex-col gap-3 h-full">
                   <div
-                    className={`w-16 h-16 rounded-[1.5rem] flex items-center justify-center ${feature.color} mb-2 group-hover:scale-110 transition-transform duration-300`}
+                    className={`w-12 h-12 rounded-xl flex items-center justify-center ${card.iconColor} mb-1 group-hover:scale-110 transition-transform duration-300`}
                   >
-                    <feature.icon className="h-8 w-8 stroke-[1.5]" />
+                    <card.icon className="h-6 w-6 stroke-[1.5]" />
                   </div>
-                  <h3 className="font-bold text-gray-800 text-sm md:text-base leading-tight px-2">
-                    {feature.title}
+                  <h3 className="font-bold text-gray-900 text-base leading-tight">
+                    {card.question}
                   </h3>
+                  <p className="text-gray-600 text-xs leading-relaxed flex-grow">
+                    {card.description}
+                  </p>
+                  <a
+                    href="#"
+                    className="text-emerald-600 font-semibold text-xs hover:text-emerald-700 transition-colors flex items-center gap-1 group-hover:gap-2 duration-300"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }}
+                  >
+                    {card.cta}
+                  </a>
                 </CardContent>
               </Card>
             ))}
@@ -470,43 +503,225 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Why Choose Section */}
+      <section className="py-10 md:py-12 bg-gradient-to-b from-white to-emerald-50/30">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <div className="text-center mb-8 md:mb-10">
+            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">
+              {t("whyChoose.title")}
+            </h2>
+            <p className="text-gray-600 text-sm font-medium">
+              {t("whyChoose.subtitle")}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {[
+              {
+                icon: Tablet,
+                title: t("whyChoose.card1.title"),
+                description: t("whyChoose.card1.description"),
+                iconColor: "bg-emerald-50 text-emerald-600",
+                gradient: "from-emerald-50 to-emerald-100/50",
+              },
+              {
+                icon: Shield,
+                title: t("whyChoose.card2.title"),
+                description: t("whyChoose.card2.description"),
+                iconColor: "bg-blue-50 text-blue-600",
+                gradient: "from-blue-50 to-blue-100/50",
+              },
+              {
+                icon: Globe,
+                title: t("whyChoose.card3.title"),
+                description: t("whyChoose.card3.description"),
+                iconColor: "bg-purple-50 text-purple-600",
+                gradient: "from-purple-50 to-purple-100/50",
+              },
+            ].map((card, i) => (
+              <Card
+                key={i}
+                className="border-0 shadow-md hover:shadow-xl transition-all duration-300 bg-white rounded-xl overflow-hidden group hover:-translate-y-1"
+              >
+                <CardContent className="p-5 md:p-6 flex flex-col items-center text-center gap-3 h-full">
+                  <div
+                    className={`w-11 h-11 md:w-12 md:h-12 rounded-xl flex items-center justify-center ${card.iconColor} flex-shrink-0 group-hover:scale-105 transition-transform duration-300`}
+                  >
+                    <card.icon className="h-5 w-5 md:h-6 md:w-6 stroke-[1.5]" />
+                  </div>
+                  <div className="flex-1 flex flex-col gap-2">
+                    <h3 className="font-bold text-gray-900 text-base md:text-lg leading-tight">
+                      {card.title}
+                    </h3>
+                    <p className="text-gray-700 text-xs md:text-sm leading-relaxed font-medium">
+                      {card.description}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Dashboard Preview Section */}
+      <section className="py-10 md:py-14 bg-white relative overflow-hidden">
+        {/* Background gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/40 via-white to-blue-50/30 pointer-events-none"></div>
+
+        <div className="container mx-auto px-4 max-w-6xl relative z-10">
+          <div className="text-center mb-8 md:mb-10">
+            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">
+              {t("dashboard.title")}
+            </h2>
+            <p className="text-gray-600 text-sm font-medium max-w-2xl mx-auto">
+              {t("dashboard.subtitle")}
+            </p>
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-6 md:gap-8 items-center">
+            {/* Dashboard Mockup */}
+            <div className="order-2 lg:order-1">
+              <div className="relative group">
+                {/* Browser Chrome */}
+                <div className="bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-200 transition-all duration-500 group-hover:shadow-3xl group-hover:-translate-y-2">
+                  {/* Browser Header */}
+                  <div className="bg-gray-100 px-4 py-3 flex items-center gap-2 border-b border-gray-200">
+                    <div className="flex gap-1.5">
+                      <div className="w-3 h-3 rounded-full bg-red-400"></div>
+                      <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
+                      <div className="w-3 h-3 rounded-full bg-green-400"></div>
+                    </div>
+                    <div className="flex-1 mx-4">
+                      <div className="bg-white rounded-md px-3 py-1 text-xs text-gray-500 flex items-center gap-2">
+                        <svg
+                          className="w-3 h-3 text-green-600"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                        <span>geocapture.app/tracking</span>
+                      </div>
+                    </div>
+                  </div>
+                  {/* Dashboard Image */}
+                  <div className="relative bg-gray-50">
+                    <img
+                      src={dashboardPng}
+                      alt="Dashboard Preview"
+                      className="w-full h-auto object-cover"
+                    />
+                    {/* Subtle overlay gradient */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-white/10 to-transparent pointer-events-none"></div>
+                  </div>
+                </div>
+
+                {/* Floating badge */}
+                <div className="absolute -top-4 -right-4 bg-emerald-500 text-white px-4 py-2 rounded-full shadow-lg font-bold text-sm flex items-center gap-2 animate-pulse">
+                  <CheckCircle2 className="w-4 h-4" />
+                  {t("dashboard.badge")}
+                </div>
+              </div>
+            </div>
+
+            {/* Features List */}
+            <div className="order-1 lg:order-2 space-y-4">
+              {[
+                {
+                  icon: MapPin,
+                  title: t("dashboard.feature1Title"),
+                  description: t("dashboard.feature1Desc"),
+                  color: "text-cyan-600 bg-cyan-50",
+                },
+                {
+                  icon: Activity,
+                  title: t("dashboard.feature2Title"),
+                  description: t("dashboard.feature2Desc"),
+                  color: "text-blue-600 bg-blue-50",
+                },
+                {
+                  icon: Smartphone,
+                  title: t("dashboard.feature3Title"),
+                  description: t("dashboard.feature3Desc"),
+                  color: "text-purple-600 bg-purple-50",
+                },
+                {
+                  icon: Radio,
+                  title: t("dashboard.feature4Title"),
+                  description: t("dashboard.feature4Desc"),
+                  color: "text-emerald-600 bg-emerald-50",
+                },
+              ].map((feature, i) => (
+                <div
+                  key={i}
+                  className="flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors duration-300 group/item"
+                >
+                  <div
+                    className={`w-10 h-10 rounded-lg flex items-center justify-center ${feature.color} flex-shrink-0 group-hover/item:scale-110 transition-transform duration-300`}
+                  >
+                    <feature.icon className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-gray-900 text-sm mb-0.5">
+                      {feature.title}
+                    </h3>
+                    <p className="text-gray-600 text-xs leading-relaxed">
+                      {feature.description}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Technologies */}
-      <section className="py-12 bg-white">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-10">
+      <section className="py-10 bg-white">
+        <div className="container mx-auto px-4 text-center max-w-6xl">
+          <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-8">
             {t("technologies.title")}
           </h2>
 
-          <div className="grid md:grid-cols-3 gap-8 mb-10 max-w-5xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-6 mb-8">
             {[
               {
-                icon: MapPin,
+                svg: preciseGpsSvg,
                 title: t("technologies.gpsTracking"),
                 desc: t("technologies.gpsDesc"),
               },
               {
-                icon: BrainCircuit,
+                svg: modernMlSvg,
                 title: t("technologies.mlAlgorithms"),
                 desc: t("technologies.mlDesc"),
               },
               {
-                icon: Cpu,
+                svg: wideRangeSvg,
                 title: t("technologies.iotDevices"),
                 desc: t("technologies.iotDesc"),
               },
             ].map((tech, i) => (
               <div
                 key={i}
-                className="bg-emerald-50/30 rounded-[2rem] p-6 md:p-8 flex flex-col items-center gap-6 hover:bg-emerald-50/60 transition-colors border border-emerald-100/50"
+                className="bg-emerald-50/30 rounded-xl p-5 md:p-6 flex flex-col items-center gap-4 hover:bg-emerald-50/60 transition-colors border border-emerald-100/50"
               >
-                <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center text-primary shadow-sm mb-2 border border-emerald-100">
-                  <tech.icon className="h-8 w-8 stroke-[1.5]" />
+                <div className="w-16 h-16 bg-white rounded-xl flex items-center justify-center shadow-sm mb-1 border border-emerald-100 overflow-hidden">
+                  <img
+                    src={tech.svg}
+                    alt={tech.title}
+                    className="w-full h-full object-contain p-2"
+                  />
                 </div>
                 <div>
-                  <h3 className="font-bold text-gray-900 text-lg mb-2">
+                  <h3 className="font-bold text-gray-900 text-sm md:text-base mb-1">
                     {tech.title}
                   </h3>
-                  <p className="text-gray-500 text-sm font-medium">
+                  <p className="text-gray-500 text-xs font-medium">
                     {tech.desc}
                   </p>
                 </div>
@@ -514,25 +729,25 @@ export default function Home() {
             ))}
           </div>
 
-          <Button className="h-14 px-10 text-lg font-bold rounded-full shadow-xl shadow-primary/25 bg-primary hover:bg-primary/90 transition-all hover:scale-105">
+          <Button className="h-12 px-8 text-base font-bold rounded-full shadow-2xl shadow-emerald-600/30 bg-emerald-600 hover:bg-emerald-700 transition-all hover:scale-105 border-2 border-emerald-700">
             {t("technologies.tryNow")}
           </Button>
         </div>
       </section>
 
       {/* Press / Testimonials */}
-      <section className="py-12 bg-white border-t border-gray-50">
-        <div className="container mx-auto px-4 text-center max-w-3xl">
-          <h2 className="text-2xl font-bold text-gray-900 mb-10">
+      <section className="py-10 bg-white border-t border-gray-50">
+        <div className="container mx-auto px-4 text-center max-w-6xl">
+          <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-8">
             {t("testimonials.title")}
           </h2>
 
-          <div className="relative p-10 bg-white rounded-[2rem] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] border border-gray-100 mb-12">
-            <Quote className="h-8 w-8 text-primary/20 absolute top-8 left-8 rotate-180" />
-            <p className="text-gray-600 italic text-xl leading-relaxed relative z-10 pt-6 px-4 font-light">
+          <div className="relative p-6 md:p-8 bg-white rounded-xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] border border-gray-100 mb-10">
+            <Quote className="h-6 w-6 text-primary/20 absolute top-6 left-6 rotate-180" />
+            <p className="text-gray-600 italic text-base md:text-lg leading-relaxed relative z-10 pt-4 px-2 font-light">
               "{t("testimonials.quote")}"
             </p>
-            <div className="mt-8 flex justify-center items-center gap-2">
+            <div className="mt-6 flex justify-center items-center gap-2">
               <div className="w-8 h-1 bg-primary/20 rounded-full"></div>
               <span className="font-bold text-xs tracking-widest text-gray-400 uppercase">
                 The Verge
@@ -559,16 +774,23 @@ export default function Home() {
       </section>
 
       {/* How it Works */}
-      <section className="py-12 bg-white relative overflow-hidden">
-        <div className="container mx-auto px-4 relative z-10">
-          <h2 className="text-2xl md:text-3xl font-bold text-center text-gray-900 mb-12">
-            {t("howItWorks.title")}
-          </h2>
+      <section className="py-10 md:py-12 bg-white relative overflow-hidden">
+        <div className="container mx-auto px-4 max-w-6xl relative z-10">
+          {/* Header */}
+          <div className="text-center mb-8 md:mb-10">
+            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">
+              {t("howItWorks.title")}
+            </h2>
+            <p className="text-gray-500 text-sm font-medium max-w-2xl mx-auto px-4">
+              {t("howItWorks.subtitle")}
+            </p>
+          </div>
 
-          <div className="grid md:grid-cols-3 gap-8 relative">
-            {/* Connecting Line */}
-            <div className="hidden md:block absolute top-10 left-[16%] right-[16%] h-1 bg-emerald-50 z-0">
-              <div className="h-full bg-emerald-100 w-1/2"></div>
+          {/* Steps Grid */}
+          <div className="grid md:grid-cols-3 gap-6 md:gap-8 relative">
+            {/* Connecting Line - Desktop - Posicionada no centro vertical dos números */}
+            <div className="hidden md:block absolute top-10 left-[12%] right-[12%] h-0.5 bg-emerald-100 z-0">
+              <div className="h-full bg-emerald-200 w-full"></div>
             </div>
 
             {[
@@ -590,21 +812,25 @@ export default function Home() {
             ].map((item, i) => (
               <div
                 key={i}
-                className="flex flex-col items-center text-center gap-6 bg-white p-4 relative z-10"
+                className="flex flex-row items-start gap-3 md:gap-4 relative z-10"
               >
-                <div className="w-16 h-16 bg-emerald-50 text-primary font-bold text-3xl rounded-2xl flex items-center justify-center shadow-sm border border-emerald-100 relative group">
-                  <span className="group-hover:scale-110 transition-transform">
+                {/* Step Number - Quadrado com cantos arredondados */}
+                <div className="relative flex-shrink-0">
+                  <div className="w-14 h-14 md:w-16 md:h-16 bg-emerald-50 md:bg-emerald-100 text-emerald-600 md:text-emerald-700 font-bold text-2xl md:text-3xl rounded-xl flex items-center justify-center border border-emerald-200">
                     {item.step}
-                  </span>
+                  </div>
+                  {/* Connecting Line - Mobile */}
                   {i < 2 && (
-                    <div className="md:hidden absolute -bottom-8 left-1/2 -translate-x-1/2 w-0.5 h-8 bg-emerald-100"></div>
+                    <div className="md:hidden absolute -right-6 top-8 w-6 h-0.5 bg-emerald-100"></div>
                   )}
                 </div>
-                <div>
-                  <h3 className="font-bold text-xl text-gray-900 mb-3">
+
+                {/* Content - Alinhado à esquerda */}
+                <div className="flex flex-col gap-2 flex-1 pt-0.5">
+                  <h3 className="font-bold text-base md:text-lg text-gray-900 leading-tight text-left">
                     {item.title}
                   </h3>
-                  <p className="text-gray-500 text-sm leading-relaxed">
+                  <p className="text-gray-500 text-xs md:text-sm leading-relaxed text-left">
                     {item.desc}
                   </p>
                 </div>
@@ -612,8 +838,12 @@ export default function Home() {
             ))}
           </div>
 
-          <div className="text-center mt-16">
-            <Button className="h-14 px-10 text-lg font-bold rounded-full shadow-xl shadow-primary/25 bg-primary hover:bg-primary/90 transition-all hover:scale-105">
+          {/* CTA Button */}
+          <div className="text-center mt-10 md:mt-12">
+            <Button
+              className="h-11 md:h-12 px-7 md:px-9 text-sm md:text-base font-bold rounded-lg shadow-2xl shadow-emerald-600/30 bg-emerald-600 hover:bg-emerald-700 text-white transition-all hover:scale-105 border-2 border-emerald-700"
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            >
               {t("technologies.tryNow")}
             </Button>
           </div>
@@ -621,15 +851,39 @@ export default function Home() {
       </section>
 
       {/* Reviews */}
-      <section className="py-12 bg-slate-50/80">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-14">
+      <section className="py-10 bg-slate-50/80">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <div className="text-center mb-10">
             <div className="inline-flex items-center justify-center mb-4">
               <div className="bg-white px-6 py-2 rounded-full shadow-sm border border-gray-100 flex items-center gap-2 text-primary font-bold text-lg">
                 <Users className="h-5 w-5" /> {t("reviews.title")}
               </div>
             </div>
             <p className="text-gray-400 font-medium">{t("reviews.subtitle")}</p>
+
+            {/* Prova social dinâmica */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-6">
+              <div className="flex items-center gap-2 bg-white px-4 py-2.5 rounded-xl shadow-sm border border-gray-100">
+                <div className="flex text-yellow-400">
+                  <Star className="h-4 w-4 fill-current" />
+                  <Star className="h-4 w-4 fill-current" />
+                  <Star className="h-4 w-4 fill-current" />
+                  <Star className="h-4 w-4 fill-current" />
+                  <Star className="h-4 w-4 fill-current" />
+                </div>
+                <span className="font-bold text-gray-900">
+                  {t("reviews.rating")}
+                </span>
+                <span className="text-gray-500 text-sm">
+                  ({t("reviews.totalReviews")})
+                </span>
+              </div>
+              <div className="bg-emerald-50 px-4 py-2.5 rounded-xl border border-emerald-200">
+                <p className="text-emerald-700 font-bold text-sm">
+                  {t("reviews.locationsToday")}
+                </p>
+              </div>
+            </div>
           </div>
 
           <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-6 mb-12">
@@ -703,7 +957,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-3 gap-5">
             {[
               {
                 name: t("reviews.review1Name"),
@@ -726,16 +980,16 @@ export default function Home() {
             ].map((review, i) => (
               <Card
                 key={i}
-                className="border-0 shadow-sm hover:shadow-lg transition-shadow duration-300 bg-white rounded-2xl"
+                className="border-0 shadow-sm hover:shadow-lg transition-shadow duration-300 bg-white rounded-xl"
               >
-                <CardContent className="p-8">
-                  <div className="flex items-center gap-4 mb-6">
-                    <Avatar className="h-12 w-12 border border-gray-100">
+                <CardContent className="p-5 md:p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <Avatar className="h-10 w-10 border border-gray-100">
                       <AvatarImage src={review.img} />
                       <AvatarFallback>{review.name[0]}</AvatarFallback>
                     </Avatar>
                     <div className="text-left">
-                      <h4 className="font-bold text-gray-900 leading-tight">
+                      <h4 className="font-bold text-gray-900 text-sm leading-tight">
                         {review.name}
                       </h4>
                       <div className="flex items-center text-emerald-500 text-xs font-medium mt-0.5">
@@ -744,10 +998,10 @@ export default function Home() {
                       </div>
                     </div>
                   </div>
-                  <h5 className="font-bold text-gray-900 mb-3">
+                  <h5 className="font-bold text-gray-900 text-sm mb-2">
                     {review.role}
                   </h5>
-                  <p className="text-gray-500 text-sm leading-relaxed">
+                  <p className="text-gray-500 text-xs leading-relaxed">
                     {review.desc}
                   </p>
                 </CardContent>
@@ -757,17 +1011,128 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Key Questions - Destacadas */}
+      <section className="py-10 md:py-12 bg-gradient-to-b from-white to-emerald-50/20">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <div className="text-center mb-6 md:mb-8">
+            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">
+              {t("keyQuestions.title")}
+            </h2>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-5 mb-6">
+            {[
+              {
+                question: t("keyQuestions.question1"),
+                answer: t("keyQuestions.answer1"),
+                icon: CheckCircle2,
+                color: "emerald",
+              },
+              {
+                question: t("keyQuestions.question2"),
+                answer: t("keyQuestions.answer2"),
+                icon: Shield,
+                color: "blue",
+              },
+            ].map((item, i) => (
+              <Card
+                key={i}
+                className="border-2 border-emerald-200 bg-white shadow-lg hover:shadow-xl transition-shadow rounded-xl overflow-hidden"
+              >
+                <CardContent className="p-5 md:p-6">
+                  <div className="flex items-start gap-3 mb-3">
+                    <div
+                      className={`w-10 h-10 rounded-lg bg-${item.color}-50 flex items-center justify-center flex-shrink-0`}
+                    >
+                      <item.icon className={`h-5 w-5 text-${item.color}-600`} />
+                    </div>
+                    <h3 className="font-bold text-gray-900 text-base md:text-lg leading-tight flex-1">
+                      {item.question}
+                    </h3>
+                  </div>
+                  <p className="text-gray-700 text-xs md:text-sm leading-relaxed font-medium">
+                    {item.answer}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-10 md:py-12 bg-white">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <div className="text-center mb-8 md:mb-10">
+            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">
+              {t("faq.title")}
+            </h2>
+            <p className="text-gray-500 text-sm font-medium">
+              {t("faq.subtitle")}
+            </p>
+          </div>
+
+          <Accordion
+            type="single"
+            collapsible
+            defaultValue="item-0"
+            className="w-full space-y-2"
+          >
+            {[
+              {
+                id: "item-0",
+                question: t("faq.question1"),
+                answer: t("faq.answer1"),
+              },
+              {
+                id: "item-1",
+                question: t("faq.question2"),
+                answer: t("faq.answer2"),
+              },
+              {
+                id: "item-2",
+                question: t("faq.question3"),
+                answer: t("faq.answer3"),
+              },
+              {
+                id: "item-3",
+                question: t("faq.question4"),
+                answer: t("faq.answer4"),
+              },
+              {
+                id: "item-4",
+                question: t("faq.question5"),
+                answer: t("faq.answer5"),
+              },
+            ].map((item) => (
+              <AccordionItem
+                key={item.id}
+                value={item.id}
+                className="border border-gray-200 rounded-xl bg-white hover:border-emerald-200 transition-colors overflow-hidden"
+              >
+                <AccordionTrigger className="text-left py-3 md:py-4 px-4 md:px-5 text-sm md:text-base font-semibold text-gray-900 hover:no-underline hover:text-emerald-600 transition-colors [&[data-state=open]]:text-emerald-600">
+                  {item.question}
+                </AccordionTrigger>
+                <AccordionContent className="text-gray-600 text-xs md:text-sm leading-relaxed pb-3 md:pb-4 px-4 md:px-5 pt-0">
+                  <p>{item.answer}</p>
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </div>
+      </section>
+
       {/* Footer Form */}
-      <section className="py-12 container mx-auto px-4">
-        <div className="bg-emerald-50/50 rounded-2xl p-6 md:p-12 border border-emerald-100 text-center max-w-5xl mx-auto relative overflow-hidden">
+      <section className="py-10 container mx-auto px-4 max-w-6xl">
+        <div className="bg-emerald-50/50 rounded-xl p-5 md:p-8 border border-emerald-100 text-center relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
 
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8 leading-tight">
+          <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-6 leading-tight">
             {t("footer.title")}
             <br />
             {t("footer.subtitle")}
           </h2>
-          <p className="text-gray-500 mb-10 text-lg">
+          <p className="text-gray-500 mb-8 text-sm">
             {t("footer.description")}
           </p>
 
@@ -787,8 +1152,8 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="py-16 bg-white border-t border-gray-100">
-        <div className="container mx-auto px-4 flex flex-col items-center gap-10">
+      <footer className="py-12 bg-white border-t border-gray-100">
+        <div className="container mx-auto px-4 max-w-6xl flex flex-col items-center gap-8">
           <div className="flex gap-8 text-gray-300">
             <a
               href="#"
@@ -848,6 +1213,17 @@ export default function Home() {
           </div>
         </div>
       </footer>
+
+      {/* Sticky Phone Input */}
+      <StickyPhoneInput
+        phoneNumber={stickyPhone.value}
+        onPhoneChange={stickyPhone.handleChange}
+        selectedCountry={stickyPhone.country}
+        onCountryChange={stickyPhone.handleCountryChange}
+        countries={countries}
+        isValid={stickyPhone.isValid}
+        onSearch={stickyPhone.handleSearch}
+      />
     </div>
   );
 }

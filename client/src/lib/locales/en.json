@@ -24,7 +24,7 @@
     "title": "GeoCapture"
   },
   "hero": {
-    "title": "Track any phone by number with just one click",
+    "title": "Discover the exact location of any number in minutes",
     "subtitle": "Enter the number you want to track",
     "users": "More than 25 million users",
     "trusted": "trusted us",
@@ -35,12 +35,66 @@
     "searchPlaceholder": "Search country...",
     "noCountryFound": "No country found",
     "available": "Available for tracking",
-    "invalid": "Invalid format",
+    "invalid": "Invalid phone number",
+    "enterPhone": "Please enter a phone number",
     "confidential": "100% Confidential",
-    "sslSecure": "SSL Secure"
+    "sslSecure": "No Installation"
+  },
+  "targetAudience": {
+    "title": "Who is it for?",
+    "subtitle": "Discover how thousands of people have already solved their problems",
+    "card1": {
+      "question": "Suspicion of betrayal?",
+      "description": "Discover the truth about where your partner really is",
+      "cta": "The solution is here →"
+    },
+    "card2": {
+      "question": "Worried about your children?",
+      "description": "Know where they are at any time of day",
+      "cta": "The solution is here →"
+    },
+    "card3": {
+      "question": "Lost your cell phone?",
+      "description": "Find your device even if it's turned off or without internet",
+      "cta": "The solution is here →"
+    },
+    "card4": {
+      "question": "Need to locate someone?",
+      "description": "Find the person you are looking for discreetly",
+      "cta": "The solution is here →"
+    }
+  },
+  "whyChoose": {
+    "title": "Why choose GeoCapture?",
+    "subtitle": "Advanced technology with ease of use",
+    "card1": {
+      "title": "No application needed",
+      "description": "You don't need to install anything. Just type a number and the system does the work."
+    },
+    "card2": {
+      "title": "Completely confidential",
+      "description": "Whoever has the phone will not know they are being tracked. Total secrecy."
+    },
+    "card3": {
+      "title": "All models and carriers",
+      "description": "Works with any phone, iOS or Android, on any carrier in the world."
+    }
+  },
+  "dashboard": {
+    "title": "See exactly what you'll receive",
+    "subtitle": "Complete and intuitive interface with all real-time location data",
+    "badge": "Real-time",
+    "feature1Title": "Interactive map with precise location",
+    "feature1Desc": "View the exact location on an interactive map with detailed GPS coordinates and accuracy up to 20 meters",
+    "feature2Title": "Complete activity timeline",
+    "feature2Desc": "Track all events: when the link was accessed, SMS sent and location captured with precise timestamps",
+    "feature3Title": "Detailed device information",
+    "feature3Desc": "Discover the device model, operating system, language and screen resolution of the tracked device",
+    "feature4Title": "Complete and detailed address",
+    "feature4Desc": "Get the complete address including street, neighborhood, city, state and geographic region of the location"
   },
   "features": {
-    "title": "What you'll gain",
+    "title": "What you'll have access to",
     "realtimeLocation": "Real-time location",
     "locationHistory": "Location history",
     "locationAlerts": "Location alerts",
@@ -66,16 +120,20 @@
   },
   "howItWorks": {
     "title": "How It Works",
-    "step1Title": "Verify the number",
-    "step1Desc": "Enter the phone number you want to verify. This information is private and inaccessible to third parties.",
-    "step2Title": "Send request",
-    "step2Desc": "The recipient receives an SMS to consent to sharing their location. Sharing is optional.",
-    "step3Title": "Receive location",
-    "step3Desc": "You will be notified to view the exact location on a map."
+    "subtitle": "Three simple steps to locate any number",
+    "step1Title": "Enter the number",
+    "step1Desc": "Enter the phone number you wish to locate. Your information is private and secure.",
+    "step2Title": "Wait for the search",
+    "step2Desc": "Our system combines GPS, Wi-Fi and cell towers to find the exact location.",
+    "step3Title": "See on the map",
+    "step3Desc": "Receive the precise location with complete address directly on your device."
   },
   "reviews": {
     "title": "More than 25 million users",
     "subtitle": "trusted us",
+    "rating": "4.8 out of 5",
+    "totalReviews": "based on 12,847 reviews",
+    "locationsToday": "+3,200 locations tracked in the last 24h",
     "availableOn": "Available on",
     "appStore": "App Store",
     "googlePlay": "Google Play",
@@ -89,6 +147,27 @@
     "review3Role": "Super useful!",
     "review3Desc": "Displaying physical addresses at each tracking point along a route is impressive!",
     "verified": "Verified"
+  },
+  "keyQuestions": {
+    "title": "Before you continue, you need to know:",
+    "question1": "Is it legal to use this service?",
+    "answer1": "Yes! Tracking is 100% legal when used for legitimate purposes such as protecting minors, family safety, or recovering your own devices.",
+    "question2": "Is the person notified?",
+    "answer2": "No! Our method is completely discreet and imperceptible. The person being monitored receives no notification or alert."
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Clear your doubts before starting",
+    "question1": "Is there a risk of the person finding out they are being tracked?",
+    "answer1": "No! Our method is imperceptible to those being monitored. You can rest assured, the person will never know they were tracked.",
+    "question2": "Do I need access to the person's phone?",
+    "answer2": "No, you don't need access to the phone. Our system only needs the phone number to perform tracking.",
+    "question3": "Is the fee charged monthly?",
+    "answer3": "No! We are the only one in Brazil that offers lifetime access. You pay once and never need to make any payment again.",
+    "question4": "What is the price and payment methods?",
+    "answer4": "The method is on exclusive offer for only $97 upfront or 12x $8.08. We accept credit card, bank slip and PIX.",
+    "question5": "Does it work in any country?",
+    "answer5": "Yes! Our technology works globally, in any country in the world, with any phone carrier."
   },
   "footer": {
     "title": "Find Location",
