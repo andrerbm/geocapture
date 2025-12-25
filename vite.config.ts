@@ -39,6 +39,42 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks: (id) => {
+          // Separar React e React DOM
+          if (id.includes("node_modules/react") || id.includes("node_modules/react-dom")) {
+            return "vendor-react";
+          }
+          
+          // Separar Leaflet e React-Leaflet (bibliotecas de mapas são grandes)
+          if (id.includes("node_modules/leaflet") || id.includes("node_modules/react-leaflet")) {
+            return "vendor-maps";
+          }
+          
+          // Separar bibliotecas Radix UI (muitas e grandes)
+          if (id.includes("node_modules/@radix-ui")) {
+            return "vendor-ui";
+          }
+          
+          // Separar outras bibliotecas grandes
+          if (
+            id.includes("node_modules/@tanstack") ||
+            id.includes("node_modules/framer-motion") ||
+            id.includes("node_modules/recharts") ||
+            id.includes("node_modules/date-fns")
+          ) {
+            return "vendor-utils";
+          }
+          
+          // Todas as outras dependências node_modules
+          if (id.includes("node_modules")) {
+            return "vendor";
+          }
+        },
+      },
+    },
+    chunkSizeWarningLimit: 600,
   },
   server: {
     host: "0.0.0.0",
