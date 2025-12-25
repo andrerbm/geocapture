@@ -6,7 +6,7 @@
   "scripts": {
     "dev:client": "vite dev --port 3000",
     "build:client": "vite build",
-    "preview:client": "vite preview --port 3000"
+    "preview:client": "vite preview --port 3000",
     "dev:client": "vite dev --port 3000",
     "dev": "NODE_ENV=development tsx server/index.ts",
     "build": "tsx script/build.ts",
