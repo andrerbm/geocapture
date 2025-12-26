@@ -134,3 +134,4 @@ O arquivo `vercel.json` já está configurado corretamente:
 - Não há servidor backend necessário
 - Todas as APIs são externas (geozilla.com, ipapi.co, etc.)
 - O deploy é apenas do frontend React
+

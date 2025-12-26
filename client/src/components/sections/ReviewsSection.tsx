@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { Users, Star, CheckCircle2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import LocateButton from "@/components/LocateButton";
 
 export default function ReviewsSection() {
   const { t } = useTranslation();
@@ -161,6 +162,10 @@ export default function ReviewsSection() {
               </CardContent>
             </Card>
           ))}
+        </div>
+
+        <div className="mt-10 max-w-md mx-auto">
+          <LocateButton size="md" />
         </div>
       </div>
     </section>

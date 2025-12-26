@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { Quote } from "lucide-react";
+import LocateButton from "@/components/LocateButton";
 
 export default function TestimonialsSection() {
   const { t } = useTranslation();
@@ -38,6 +39,10 @@ export default function TestimonialsSection() {
             <span className="bg-orange-600 text-white px-1 mr-0.5">THE</span>{" "}
             VERGE
           </div>
+        </div>
+
+        <div className="mt-10 max-w-md mx-auto">
+          <LocateButton size="md" />
         </div>
       </div>
     </section>

@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { CheckCircle2, Shield } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import LocateButton from "@/components/LocateButton";
 
 export default function KeyQuestionsSection() {
   const { t } = useTranslation();
@@ -52,6 +53,10 @@ export default function KeyQuestionsSection() {
               </CardContent>
             </Card>
           ))}
+        </div>
+
+        <div className="mt-8 max-w-md mx-auto">
+          <LocateButton size="md" />
         </div>
       </div>
     </section>

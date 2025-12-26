@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { Users, Search, HeartOff, Smartphone } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import LocateButton from "@/components/LocateButton";
 
 export default function TargetAudienceSection() {
   const { t } = useTranslation();
@@ -79,6 +80,10 @@ export default function TargetAudienceSection() {
               </CardContent>
             </Card>
           ))}
+        </div>
+
+        <div className="mt-10 max-w-md mx-auto">
+          <LocateButton size="md" />
         </div>
       </div>
     </section>

@@ -1,8 +1,8 @@
 import { useTranslation } from "react-i18next";
-import { Button } from "@/components/ui/button";
 import preciseGpsSvg from "@assets/precise_gps.svg";
 import modernMlSvg from "@assets/modern_ml.svg";
 import wideRangeSvg from "@assets/wide_range.svg";
+import LocateButton from "@/components/LocateButton";
 
 export default function TechnologiesSection() {
   const { t } = useTranslation();
@@ -57,9 +57,9 @@ export default function TechnologiesSection() {
           ))}
         </div>
 
-        <Button className="h-12 px-8 text-base font-bold rounded-full shadow-2xl shadow-emerald-600/30 bg-emerald-600 hover:bg-emerald-700 transition-all hover:scale-105 border-2 border-emerald-700">
-          {t("technologies.tryNow")}
-        </Button>
+        <div className="max-w-md mx-auto">
+          <LocateButton size="md" />
+        </div>
       </div>
     </section>
   );

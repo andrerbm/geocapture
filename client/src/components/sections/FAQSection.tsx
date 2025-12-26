@@ -5,6 +5,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import LocateButton from "@/components/LocateButton";
 
 export default function FAQSection() {
   const { t } = useTranslation();
@@ -70,6 +71,10 @@ export default function FAQSection() {
             </AccordionItem>
           ))}
         </Accordion>
+
+        <div className="mt-10 max-w-md mx-auto">
+          <LocateButton size="md" />
+        </div>
       </div>
     </section>
   );

@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { MapPin, Activity, Smartphone, Radio, CheckCircle2 } from "lucide-react";
 import dashboardPng from "@assets/dashboard.png";
+import LocateButton from "@/components/LocateButton";
 
 export default function DashboardPreviewSection() {
   const { t } = useTranslation();
@@ -119,6 +120,10 @@ export default function DashboardPreviewSection() {
               </div>
             ))}
           </div>
+        </div>
+
+        <div className="mt-10 max-w-md mx-auto">
+          <LocateButton size="md" />
         </div>
       </div>
     </section>

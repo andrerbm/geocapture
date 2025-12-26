@@ -33,7 +33,7 @@ export default function HeroSection({
   const { t } = useTranslation();
 
   return (
-    <section className="container mx-auto px-4 py-6 md:py-10 grid md:grid-cols-2 gap-8 md:gap-10 items-center max-w-6xl">
+    <section id="hero-section" className="container mx-auto px-4 py-6 md:py-10 grid md:grid-cols-2 gap-8 md:gap-10 items-center max-w-6xl">
       <div className="space-y-4">
         {/* Branch Header */}
         <div className="flex flex-col items-center justify-center text-center space-y-1">
