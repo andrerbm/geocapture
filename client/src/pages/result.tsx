@@ -36,6 +36,9 @@ export default function Result() {
           src={mapImage}
           alt="Map Background"
           className="w-full h-full object-cover blur-sm brightness-75"
+          loading="eager"
+          fetchPriority="high"
+          decoding="async"
         />
       </div>
 
@@ -54,7 +57,10 @@ export default function Result() {
               </div>
             </div>
 
-            <h1 className="text-xl md:text-2xl font-bold text-gray-900 mb-2 break-all">
+            <h1 
+              className="text-xl md:text-2xl font-bold text-gray-900 mb-2 break-all select-none"
+              style={{ WebkitUserSelect: 'none', WebkitTouchCallout: 'none' }}
+            >
               {phoneNumber}
             </h1>
             <h2 className="text-gray-900 font-bold text-lg mb-8">

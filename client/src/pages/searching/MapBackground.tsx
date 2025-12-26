@@ -35,6 +35,9 @@ export default function MapBackground({ phoneInfo }: MapBackgroundProps) {
         alt="Map Background"
         className="w-full h-full object-cover opacity-60 brightness-75 transition-all duration-1000"
         style={mapStyle}
+        loading="eager"
+        fetchPriority="high"
+        decoding="async"
       />
 
       {/* Gradient overlay */}

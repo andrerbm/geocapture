@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useLocation } from "wouter";
 import { useTranslation } from "react-i18next";
 import { PhoneInfo, Step } from "./types";
@@ -36,6 +36,10 @@ export function useSearchProgress(phoneNumber: string) {
   const [steps, setSteps] = useState<Step[]>(getSearchSteps(t));
   const [phoneInfo, setPhoneInfo] = useState<PhoneInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
+  
+  // Refs para evitar re-renders desnecessários e manter valores atualizados
+  const currentStepIndexRef = useRef(0);
+  const animationFrameRef = useRef<number | null>(null);
 
   const fetchPhoneInfo = useCallback(async (phone: string) => {
     try {
@@ -72,7 +76,7 @@ export function useSearchProgress(phoneNumber: string) {
 
   useEffect(() => {
     let isMounted = true;
-    let currentStepIndex = 0;
+    currentStepIndexRef.current = 0;
 
     const initialSteps = getSearchSteps(t);
     const totalDuration = initialSteps.reduce(
@@ -80,7 +84,7 @@ export function useSearchProgress(phoneNumber: string) {
       0
     );
 
-    const startTime = Date.now();
+    const startTime = performance.now();
 
     // Buscar info do telefone em paralelo
     fetchPhoneInfo(phoneNumber);
@@ -93,16 +97,17 @@ export function useSearchProgress(phoneNumber: string) {
       }))
     );
 
-    const progressInterval = setInterval(() => {
+    // Usar requestAnimationFrame para animação suave no mobile
+    const animate = (currentTime: number) => {
       if (!isMounted) return;
 
-      const elapsed = Date.now() - startTime;
+      const elapsed = currentTime - startTime;
       const newProgress = Math.min((elapsed / totalDuration) * 100, 100);
 
       setProgress(newProgress);
 
       if (newProgress >= 100) {
-        clearInterval(progressInterval);
+        // Delay antes de navegar para dar tempo da animação completar
         setTimeout(() => {
           if (isMounted) {
             setLocation(`/result?phone=${encodeURIComponent(phoneNumber)}`);
@@ -116,16 +121,17 @@ export function useSearchProgress(phoneNumber: string) {
       for (let i = 0; i < initialSteps.length; i++) {
         stepTime += initialSteps[i].duration;
 
-        if (elapsed >= stepTime && currentStepIndex === i) {
-          currentStepIndex = i + 1;
+        if (elapsed >= stepTime && currentStepIndexRef.current === i) {
+          currentStepIndexRef.current = i + 1;
+          const newStepIndex = currentStepIndexRef.current;
 
           setSteps((prevSteps) =>
             prevSteps.map((step, idx) => ({
               ...step,
               status:
-                idx < currentStepIndex
+                idx < newStepIndex
                   ? "completed"
-                  : idx === currentStepIndex
+                  : idx === newStepIndex
                   ? "active"
                   : "pending",
             }))
@@ -133,11 +139,19 @@ export function useSearchProgress(phoneNumber: string) {
           break;
         }
       }
-    }, 30);
+
+      // Continuar animação
+      animationFrameRef.current = requestAnimationFrame(animate);
+    };
+
+    // Iniciar animação
+    animationFrameRef.current = requestAnimationFrame(animate);
 
     return () => {
       isMounted = false;
-      clearInterval(progressInterval);
+      if (animationFrameRef.current !== null) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
     };
   }, [phoneNumber, setLocation, fetchPhoneInfo, t]);
 

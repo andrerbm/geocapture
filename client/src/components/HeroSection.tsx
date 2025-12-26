@@ -155,6 +155,9 @@ export default function HeroSection({
           src="/Gemini_Generated_Image_x4pmlax4pmlax4pm.png"
           alt="Location Tracking"
           className="w-full h-full object-cover"
+          loading="eager"
+          fetchPriority="high"
+          decoding="async"
         />
 
         {/* Radar effect overlay */}

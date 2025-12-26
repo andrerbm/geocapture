@@ -39,7 +39,10 @@ export default function SearchCard({
 
         {/* Phone number display */}
         <div className="mb-8 p-4 bg-gradient-to-br from-[#00Cba9]/5 to-[#00Cba9]/10 rounded-xl border border-[#00Cba9]/20">
-          <h1 className="text-2xl md:text-3xl font-bold text-[#00Cba9] tracking-wide break-all">
+          <h1 
+            className="text-2xl md:text-3xl font-bold text-[#00Cba9] tracking-wide break-all select-none"
+            style={{ WebkitUserSelect: 'none', WebkitTouchCallout: 'none' }}
+          >
             {phoneNumber}
           </h1>
 
