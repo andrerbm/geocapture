@@ -17,9 +17,8 @@ interface PhoneInputProps {
   onCountryChange: (value: string) => void;
   countries: Country[];
   isValid: boolean;
+  showInvalid: boolean;
   onSearch: () => void;
-  currentDigits: number;
-  maxDigits: number;
   variant?: "hero" | "footer";
 }
 
@@ -30,9 +29,8 @@ export default function PhoneInput({
   onCountryChange,
   countries,
   isValid,
+  showInvalid,
   onSearch,
-  currentDigits,
-  maxDigits,
   variant = "hero",
 }: PhoneInputProps) {
   const { t } = useTranslation();
@@ -80,10 +78,12 @@ export default function PhoneInput({
   } transition-all duration-300 border ${
     isValid
       ? "border-[#00Cba9] shadow-[0_0_0_3px_rgba(0,203,169,0.15)]"
-      : "border-gray-200 hover:border-gray-300"
+      : showInvalid
+        ? "border-red-300 shadow-[0_0_0_3px_rgba(239,68,68,0.1)]"
+        : "border-gray-200 hover:border-gray-300"
   }`;
 
-  const shouldShowStatus = phoneNumber && currentDigits >= maxDigits;
+  const shouldShowStatus = isValid || showInvalid;
 
   return (
     <div className={containerClasses}>
@@ -92,8 +92,7 @@ export default function PhoneInput({
       {shouldShowStatus && (
         <StatusIndicator
           isValid={isValid}
-          currentDigits={currentDigits}
-          maxDigits={maxDigits}
+          showInvalid={showInvalid}
           isHero={isHero}
         />
       )}

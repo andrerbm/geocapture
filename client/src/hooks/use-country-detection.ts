@@ -1,201 +1,160 @@
-import { useState, useEffect } from "react";
-import { CountryCode } from "libphonenumber-js";
-
-// Mapeamento de códigos ISO de país para códigos do libphonenumber-js
-// Se o código não estiver mapeado, usa o próprio código como fallback
-const countryCodeMap: Record<string, CountryCode> = {
-  BR: "BR",
-  US: "US",
-  GB: "GB",
-  CA: "CA",
-  AU: "AU",
-  DE: "DE",
-  FR: "FR",
-  IT: "IT",
-  ES: "ES",
-  PT: "PT",
-  MX: "MX",
-  AR: "AR",
-  CL: "CL",
-  CO: "CO",
-  PE: "PE",
-  VE: "VE",
-  EC: "EC",
-  BO: "BO",
-  PY: "PY",
-  UY: "UY",
-  CN: "CN",
-  JP: "JP",
-  KR: "KR",
-  IN: "IN",
-  ID: "ID",
-  PH: "PH",
-  VN: "VN",
-  TH: "TH",
-  MY: "MY",
-  SG: "SG",
-  RU: "RU",
-  UA: "UA",
-  PL: "PL",
-  RO: "RO",
-  NL: "NL",
-  BE: "BE",
-  CZ: "CZ",
-  GR: "GR",
-  SE: "SE",
-  HU: "HU",
-  AT: "AT",
-  CH: "CH",
-  BG: "BG",
-  DK: "DK",
-  FI: "FI",
-  SK: "SK",
-  NO: "NO",
-  IE: "IE",
-  HR: "HR",
-  BA: "BA",
-  RS: "RS",
-  LT: "LT",
-  SI: "SI",
-  LV: "LV",
-  EE: "EE",
-  ZA: "ZA",
-  EG: "EG",
-  NG: "NG",
-  KE: "KE",
-  MA: "MA",
-  TN: "TN",
-  GH: "GH",
-  DZ: "DZ",
-  AO: "AO",
-  UG: "UG",
-  ET: "ET",
-  TZ: "TZ",
-  TR: "TR",
-  SA: "SA",
-  AE: "AE",
-  IL: "IL",
-  IQ: "IQ",
-  IR: "IR",
-  PK: "PK",
-  BD: "BD",
-  NZ: "NZ",
-  FJ: "FJ",
-};
-
-/**
- * Converte código ISO de país para código do libphonenumber-js
- * Se não encontrar mapeamento, tenta usar o código diretamente
- */
-function mapCountryCode(isoCode: string): CountryCode | null {
-  // Se já está mapeado, retorna
-  if (countryCodeMap[isoCode]) {
-    return countryCodeMap[isoCode];
-  }
-  
-  // Tenta usar o código diretamente (pode funcionar para muitos países)
-  // Valida se é um código válido de 2 letras
-  if (isoCode && isoCode.length === 2 && /^[A-Z]{2}$/.test(isoCode)) {
-    return isoCode as CountryCode;
-  }
-  
-  return null;
-}
+import { useEffect, useState } from "react";
+import { getCountries, type CountryCode } from "libphonenumber-js";
 
 interface CountryDetectionResult {
   countryCode: CountryCode;
   isLoading: boolean;
-  error: string | null;
+}
+
+const VALID_COUNTRIES = new Set<CountryCode>(getCountries() as CountryCode[]);
+const STORAGE_KEY = "detectedCountry_v1";
+const CACHE_TTL_DAYS = 7;
+const API_TIMEOUT_MS = 2000;
+
+function normalizeCountryCode(value: unknown): CountryCode | null {
+  if (typeof value !== "string") return null;
+
+  const upper = value.trim().toUpperCase();
+  if (!/^[A-Z]{2}$/.test(upper)) return null;
+
+  const code = upper as CountryCode;
+  return VALID_COUNTRIES.has(code) ? code : null;
+}
+
+function readCachedCountry(): CountryCode | null {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+
+    const parsed = JSON.parse(raw) as { country?: string; exp?: number };
+    if (!parsed?.country || !parsed?.exp) return null;
+
+    if (Date.now() > parsed.exp) {
+      localStorage.removeItem(STORAGE_KEY);
+      return null;
+    }
+
+    return normalizeCountryCode(parsed.country);
+  } catch {
+    return null;
+  }
+}
+
+function writeCachedCountry(country: CountryCode): void {
+  try {
+    const exp = Date.now() + CACHE_TTL_DAYS * 24 * 60 * 60 * 1000;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ country, exp }));
+  } catch {
+    // ignore
+  }
 }
 
 /**
- * Hook para detectar o país do usuário baseado no IP
- * Usa múltiplas APIs como fallback para garantir confiabilidade
+ * Fetch com timeout.
+ * Usa AbortSignal.timeout/any quando disponível; caso contrário, cai no método clássico.
  */
+async function fetchJsonWithTimeout(
+  url: string,
+  timeoutMs: number,
+  signal: AbortSignal
+): Promise<unknown> {
+  // ✅ caminho moderno (mais limpo)
+  const hasAbortTimeout = typeof (AbortSignal as any).timeout === "function";
+  const hasAbortAny = typeof (AbortSignal as any).any === "function";
+
+  if (hasAbortTimeout && hasAbortAny) {
+    const timeoutSignal = (AbortSignal as any).timeout(
+      timeoutMs
+    ) as AbortSignal;
+    const combined = (AbortSignal as any).any([
+      signal,
+      timeoutSignal,
+    ]) as AbortSignal;
+
+    const res = await fetch(url, { signal: combined });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  }
+
+  // 🛡️ fallback compatível (Safari/ambientes antigos)
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+  signal.addEventListener("abort", () => controller.abort(), { once: true });
+
+  try {
+    const res = await fetch(url, { signal: controller.signal });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+async function detectCountry(signal: AbortSignal): Promise<CountryCode | null> {
+  const tasks: Promise<CountryCode | null>[] = [
+    (async () => {
+      const data = await fetchJsonWithTimeout(
+        "https://ipapi.co/json/",
+        API_TIMEOUT_MS,
+        signal
+      );
+      return normalizeCountryCode(
+        (data as { country_code?: string })?.country_code
+      );
+    })(),
+    (async () => {
+      const data = await fetchJsonWithTimeout(
+        "https://get.geojs.io/v1/ip/country.json",
+        API_TIMEOUT_MS,
+        signal
+      );
+      return normalizeCountryCode((data as { country?: string })?.country);
+    })(),
+  ];
+
+  const wrapped = tasks.map((p) =>
+    p.then((val) => {
+      if (!val) throw new Error("invalid");
+      return val;
+    })
+  );
+
+  try {
+    return await Promise.any(wrapped);
+  } catch {
+    return null;
+  }
+}
+
 export function useCountryDetection(): CountryDetectionResult {
   const [countryCode, setCountryCode] = useState<CountryCode>("BR");
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    let isMounted = true;
+    const cached = readCachedCountry();
+    if (cached) {
+      setCountryCode(cached);
+      setIsLoading(false);
+      return;
+    }
 
-    const detectCountry = async () => {
-      // Verificar se já está salvo no localStorage
-      const savedCountry = localStorage.getItem("detectedCountry");
-      if (savedCountry) {
-        const mappedCode = mapCountryCode(savedCountry);
-        if (mappedCode) {
-          if (isMounted) {
-            setCountryCode(mappedCode);
-            setIsLoading(false);
-          }
-          return;
-        }
+    const controller = new AbortController();
+
+    (async () => {
+      const detected = await detectCountry(controller.signal);
+      if (controller.signal.aborted) return;
+
+      if (detected) {
+        setCountryCode(detected);
+        writeCachedCountry(detected);
       }
 
-      // Tentar múltiplas APIs como fallback
-      const apis = [
-        // API 1: ipapi.co (gratuita, 1000 req/dia)
-        async () => {
-          const response = await fetch("https://ipapi.co/json/");
-          if (!response.ok) throw new Error("API 1 failed");
-          const data = await response.json();
-          return data.country_code;
-        },
-        // API 2: ip-api.com (gratuita, sem autenticação)
-        async () => {
-          const response = await fetch("http://ip-api.com/json/?fields=countryCode");
-          if (!response.ok) throw new Error("API 2 failed");
-          const data = await response.json();
-          return data.countryCode;
-        },
-        // API 3: geojs.io (gratuita)
-        async () => {
-          const response = await fetch("https://get.geojs.io/v1/ip/country.json");
-          if (!response.ok) throw new Error("API 3 failed");
-          const data = await response.json();
-          return data.country;
-        },
-      ];
+      setIsLoading(false);
+    })();
 
-      // Tentar cada API sequencialmente
-      for (const api of apis) {
-        try {
-          const code = await api();
-          if (code) {
-            const mappedCode = mapCountryCode(code);
-            if (mappedCode) {
-              if (isMounted) {
-                setCountryCode(mappedCode);
-                setIsLoading(false);
-                // Salvar no localStorage para próximas visitas
-                localStorage.setItem("detectedCountry", mappedCode);
-              }
-              return;
-            }
-          }
-        } catch (err) {
-          // Continuar para próxima API
-          continue;
-        }
-      }
-
-      // Se todas as APIs falharem, usar BR como padrão
-      if (isMounted) {
-        setCountryCode("BR");
-        setIsLoading(false);
-        setError("Não foi possível detectar o país. Usando Brasil como padrão.");
-      }
-    };
-
-    detectCountry();
-
-    return () => {
-      isMounted = false;
-    };
+    return () => controller.abort();
   }, []);
 
-  return { countryCode, isLoading, error };
+  return { countryCode, isLoading };
 }
-

@@ -1,6 +1,6 @@
 import {
   AsYouType,
-  parsePhoneNumber,
+  parsePhoneNumberWithError,
   CountryCode,
   getCountries,
   getCountryCallingCode,
@@ -165,12 +165,12 @@ export const isValidPhoneNumber = (phone: string, country: CountryCode): boolean
   if (!phone || phone.trim() === "") return false;
 
   try {
-    const parsed = parsePhoneNumber(phone, country);
-    return parsed ? parsed.isValid() : false;
+    const parsed = parsePhoneNumberWithError(phone, country);
+    return parsed.isValid();
   } catch {
     return false;
   }
 };
 
-export { parsePhoneNumber, type CountryCode };
+export { parsePhoneNumberWithError, type CountryCode };
 

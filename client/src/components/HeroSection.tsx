@@ -16,9 +16,8 @@ interface HeroSectionProps {
   onCountryChange: (value: string) => void;
   countries: Country[];
   isValid: boolean;
+  showInvalid: boolean;
   onSearch: () => void;
-  currentDigits: number;
-  maxDigits: number;
 }
 
 export default function HeroSection({
@@ -28,9 +27,8 @@ export default function HeroSection({
   onCountryChange,
   countries,
   isValid,
+  showInvalid,
   onSearch,
-  currentDigits,
-  maxDigits,
 }: HeroSectionProps) {
   const { t } = useTranslation();
 
@@ -146,9 +144,8 @@ export default function HeroSection({
           onCountryChange={onCountryChange}
           countries={countries}
           isValid={isValid}
+          showInvalid={showInvalid}
           onSearch={onSearch}
-          currentDigits={currentDigits}
-          maxDigits={maxDigits}
           variant="hero"
         />
       </div>

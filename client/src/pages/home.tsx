@@ -57,9 +57,8 @@ export default function Home() {
         onCountryChange={heroPhone.handleCountryChange}
         countries={countries}
         isValid={heroPhone.isValid}
+        showInvalid={heroPhone.showInvalid}
         onSearch={heroPhone.handleSearch}
-        currentDigits={heroPhone.digitCount}
-        maxDigits={heroPhone.maxDigits}
       />
 
       <TargetAudienceSection />
@@ -79,9 +78,8 @@ export default function Home() {
         onCountryChange={footerPhone.handleCountryChange}
         countries={countries}
         isValid={footerPhone.isValid}
+        showInvalid={footerPhone.showInvalid}
         onSearch={footerPhone.handleSearch}
-        currentDigits={footerPhone.digitCount}
-        maxDigits={footerPhone.maxDigits}
       />
 
       <Footer />
@@ -93,6 +91,7 @@ export default function Home() {
         onCountryChange={stickyPhone.handleCountryChange}
         countries={countries}
         isValid={stickyPhone.isValid}
+        showInvalid={stickyPhone.showInvalid}
         onSearch={stickyPhone.handleSearch}
       />
     </div>

@@ -1,11 +1,11 @@
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import { CountryCode } from "libphonenumber-js";
 import {
   countries,
   formatPhoneNumber,
   getMaxLength,
   isValidPhoneNumber,
-  parsePhoneNumber,
+  parsePhoneNumberWithError,
 } from "@/lib/phone-utils";
 
 export function usePhoneField(
@@ -15,18 +15,44 @@ export function usePhoneField(
   const [country, setCountry] = useState<CountryCode>(initialCountry);
   const [value, setValue] = useState("");
   const [userSelectedCountry, setUserSelectedCountry] = useState(false);
+
+  const [isValid, setIsValid] = useState(false);
+  const [isValidating, setIsValidating] = useState(false);
+
+  // ✅ novo: garante que só mostra inválido após terminar uma validação
+  const [validationDone, setValidationDone] = useState(false);
+
   const previousDigitsRef = useRef<string>("");
   const previousFormattedRef = useRef<string>("");
 
-  // Atualizar país quando initialCountry mudar APENAS se o usuário não selecionou manualmente
+  const validCountrySet = useMemo(
+    () => new Set<CountryCode>(countries.map((c) => c.code as CountryCode)),
+    []
+  );
+
+  const dialCodeByCountry = useMemo(
+    () =>
+      new Map<CountryCode, string>(
+        countries.map((c) => [c.code as CountryCode, c.dialCode])
+      ),
+    []
+  );
+
+  const resetInput = useCallback(() => {
+    setValue("");
+    setIsValid(false);
+    setIsValidating(false);
+    setValidationDone(false);
+    previousDigitsRef.current = "";
+    previousFormattedRef.current = "";
+  }, []);
+
   useEffect(() => {
     if (!userSelectedCountry && initialCountry !== country) {
       setCountry(initialCountry);
-      setValue("");
-      previousDigitsRef.current = "";
-      previousFormattedRef.current = "";
+      resetInput();
     }
-  }, [initialCountry, userSelectedCountry, country]);
+  }, [initialCountry, userSelectedCountry, country, resetInput]);
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,9 +60,7 @@ export function usePhoneField(
       const previousFormatted = previousFormattedRef.current;
 
       if (inputValue === "") {
-        setValue("");
-        previousDigitsRef.current = "";
-        previousFormattedRef.current = "";
+        resetInput();
         return;
       }
 
@@ -48,16 +72,22 @@ export function usePhoneField(
         currentDigits.length < previousDigits.length;
 
       if (isDeleting) {
-        if (currentDigits.length === 0) {
-          setValue("");
-          previousDigitsRef.current = "";
-          previousFormattedRef.current = "";
-        } else {
-          const formatted = formatPhoneNumber(currentDigits, country);
-          setValue(formatted);
-          previousDigitsRef.current = currentDigits;
-          previousFormattedRef.current = formatted;
+        let nextDigits = currentDigits;
+
+        if (currentDigits === previousDigits) {
+          nextDigits = previousDigits.slice(0, -1);
         }
+
+        if (!nextDigits) {
+          resetInput();
+          return;
+        }
+
+        const formatted = formatPhoneNumber(nextDigits, country);
+        setValue(formatted);
+
+        previousDigitsRef.current = nextDigits;
+        previousFormattedRef.current = formatted;
         return;
       }
 
@@ -66,66 +96,99 @@ export function usePhoneField(
       previousDigitsRef.current = formatted.replace(/\D/g, "");
       previousFormattedRef.current = formatted;
     },
-    [country]
+    [country, resetInput]
   );
 
   const handleCountryChange = useCallback(
     (newCountry: string) => {
+      const next = newCountry.toUpperCase() as CountryCode;
+      if (!validCountrySet.has(next)) return;
+
       setUserSelectedCountry(true);
-      setCountry(newCountry as CountryCode);
-      const digitsOnly = value.replace(/\D/g, "");
-      if (digitsOnly) {
-        const reformatted = formatPhoneNumber(
-          digitsOnly,
-          newCountry as CountryCode
-        );
-        setValue(reformatted);
+      setCountry(next);
+
+      setValue((prev) => {
+        const digitsOnly = prev.replace(/\D/g, "");
+        if (!digitsOnly) {
+          previousDigitsRef.current = "";
+          previousFormattedRef.current = "";
+          setIsValid(false);
+          setIsValidating(false);
+          setValidationDone(false);
+          return "";
+        }
+
+        const reformatted = formatPhoneNumber(digitsOnly, next);
         previousDigitsRef.current = digitsOnly;
         previousFormattedRef.current = reformatted;
-      } else {
-        setValue("");
-        previousDigitsRef.current = "";
-        previousFormattedRef.current = "";
-      }
+
+        // vai revalidar quando atingir maxDigits
+        setIsValidating(false);
+        setValidationDone(false);
+
+        return reformatted;
+      });
     },
-    [value]
+    [validCountrySet]
   );
 
-  const isValid = isValidPhoneNumber(value, country);
-  const digitCount = value.replace(/\D/g, "").length;
-  const maxDigits = getMaxLength(country);
+  const digitsOnly = useMemo(() => value.replace(/\D/g, ""), [value]);
+  const digitCount = digitsOnly.length;
+  const maxDigits = useMemo(() => getMaxLength(country), [country]);
+
+  useEffect(() => {
+    // Se ainda não chegou no tamanho esperado: não valida e não mostra erro
+    if (digitCount === 0 || digitCount < maxDigits) {
+      setIsValidating(false);
+      setValidationDone(false);
+      return;
+    }
+
+    // ✅ assim que atingir maxDigits, já bloqueia feedback de inválido
+    setIsValidating(true);
+    setValidationDone(false);
+
+    const id = window.setTimeout(() => {
+      const ok = isValidPhoneNumber(value, country);
+      setIsValid(ok);
+      setIsValidating(false);
+      setValidationDone(true); // ✅ libera mostrar inválido caso seja false
+    }, 400);
+
+    return () => window.clearTimeout(id);
+  }, [value, country, digitCount, maxDigits]);
 
   const handleSearch = useCallback(() => {
-    if (!value.trim() || !isValid) return;
+    if (!digitsOnly || !isValid) return;
 
     try {
-      const digitsOnly = value.replace(/\D/g, "");
-      const parsed = parsePhoneNumber(digitsOnly, country);
-
-      if (parsed && parsed.isValid()) {
-        const fullNumber = parsed.formatInternational();
-        onValidSearch(fullNumber);
-      } else {
-        const currentCountry = countries.find((c) => c.code === country);
-        const fullNumber = currentCountry
-          ? `${currentCountry.dialCode} ${digitsOnly}`
-          : value;
-        onValidSearch(fullNumber);
+      const parsed = parsePhoneNumberWithError(digitsOnly, country);
+      if (parsed.isValid()) {
+        onValidSearch(parsed.formatInternational());
+        return;
       }
     } catch {
-      const currentCountry = countries.find((c) => c.code === country);
-      const digitsOnly = value.replace(/\D/g, "");
-      const fullNumber = currentCountry
-        ? `${currentCountry.dialCode} ${digitsOnly}`
-        : value;
-      onValidSearch(fullNumber);
+      // ignore
     }
-  }, [value, isValid, country, onValidSearch]);
+
+    const dial = dialCodeByCountry.get(country);
+    onValidSearch(dial ? `${dial} ${digitsOnly}` : value);
+  }, [digitsOnly, isValid, country, onValidSearch, dialCodeByCountry, value]);
+
+  // ✅ só mostra inválido quando:
+  // - digitCount >= maxDigits
+  // - NÃO está validando
+  // - a validação daquele estado já terminou (validationDone)
+  // - e é inválido
+  const showInvalid =
+    digitCount >= maxDigits && validationDone && !isValidating && !isValid;
 
   return {
     country,
     value,
     isValid,
+    isValidating,
+    showInvalid,
     digitCount,
     maxDigits,
     handleChange,
@@ -133,4 +196,3 @@ export function usePhoneField(
     handleSearch,
   };
 }
-

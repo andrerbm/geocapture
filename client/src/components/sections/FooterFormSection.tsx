@@ -10,9 +10,8 @@ interface FooterFormSectionProps {
   onCountryChange: (value: string) => void;
   countries: Country[];
   isValid: boolean;
+  showInvalid: boolean;
   onSearch: () => void;
-  currentDigits: number;
-  maxDigits: number;
 }
 
 export default function FooterFormSection({
@@ -22,9 +21,8 @@ export default function FooterFormSection({
   onCountryChange,
   countries,
   isValid,
+  showInvalid,
   onSearch,
-  currentDigits,
-  maxDigits,
 }: FooterFormSectionProps) {
   const { t } = useTranslation();
 
@@ -38,9 +36,7 @@ export default function FooterFormSection({
           <br />
           {t("footer.subtitle")}
         </h2>
-        <p className="text-gray-500 mb-8 text-sm">
-          {t("footer.description")}
-        </p>
+        <p className="text-gray-500 mb-8 text-sm">{t("footer.description")}</p>
 
         <PhoneInput
           phoneNumber={phoneNumber}
@@ -49,13 +45,11 @@ export default function FooterFormSection({
           onCountryChange={onCountryChange}
           countries={countries}
           isValid={isValid}
+          showInvalid={showInvalid}
           onSearch={onSearch}
-          currentDigits={currentDigits}
-          maxDigits={maxDigits}
           variant="footer"
         />
       </div>
     </section>
   );
 }
-

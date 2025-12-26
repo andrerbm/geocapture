@@ -23,6 +23,7 @@ interface StickyPhoneInputProps {
   onCountryChange: (value: string) => void;
   countries: Country[];
   isValid: boolean;
+  showInvalid: boolean;
   onSearch: () => void;
 }
 
@@ -33,6 +34,7 @@ export default function StickyPhoneInput({
   onCountryChange,
   countries,
   isValid,
+  showInvalid,
   onSearch,
 }: StickyPhoneInputProps) {
   const { t } = useTranslation();
@@ -93,7 +95,7 @@ export default function StickyPhoneInput({
       return;
     }
 
-    if (!isValid) {
+    if (!isValid || showInvalid) {
       setError(t("hero.invalid") || "Número de telefone inválido");
       setTimeout(() => setError(""), 3000);
       return;
