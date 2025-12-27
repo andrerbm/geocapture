@@ -55,7 +55,6 @@ export default function Home() {
         selectedCountry={heroPhone.country}
         onCountryChange={heroPhone.handleCountryChange}
         countries={countries}
-        isValid={heroPhone.isValid}
         showInvalid={heroPhone.showInvalid}
         onSearch={heroPhone.handleSearch}
       />
@@ -75,7 +74,6 @@ export default function Home() {
         selectedCountry={footerPhone.country}
         onCountryChange={footerPhone.handleCountryChange}
         countries={countries}
-        isValid={footerPhone.isValid}
         showInvalid={footerPhone.showInvalid}
         onSearch={footerPhone.handleSearch}
       />
@@ -88,7 +86,6 @@ export default function Home() {
         selectedCountry={stickyPhone.country}
         onCountryChange={stickyPhone.handleCountryChange}
         countries={countries}
-        isValid={stickyPhone.isValid}
         showInvalid={stickyPhone.showInvalid}
         onSearch={stickyPhone.handleSearch}
       />

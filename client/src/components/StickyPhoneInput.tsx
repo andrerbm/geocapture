@@ -22,7 +22,6 @@ interface StickyPhoneInputProps {
   selectedCountry: CountryCode;
   onCountryChange: (value: string) => void;
   countries: Country[];
-  isValid: boolean;
   showInvalid: boolean;
   onSearch: () => void;
 }
@@ -33,7 +32,6 @@ export default function StickyPhoneInput({
   selectedCountry,
   onCountryChange,
   countries,
-  isValid,
   showInvalid,
   onSearch,
 }: StickyPhoneInputProps) {
@@ -42,7 +40,6 @@ export default function StickyPhoneInput({
   const [isDismissed, setIsDismissed] = useState(false);
   const [open, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [error, setError] = useState("");
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -88,20 +85,8 @@ export default function StickyPhoneInput({
     setSearchTerm("");
   };
 
+  // ✅ Validação acontece no hook (submit-only), aqui apenas chamamos onSearch
   const handleSearch = () => {
-    if (!phoneNumber.trim()) {
-      setError(t("hero.enterPhone") || "Por favor, digite um número de telefone");
-      setTimeout(() => setError(""), 3000);
-      return;
-    }
-
-    if (!isValid || showInvalid) {
-      setError(t("hero.invalid") || "Número de telefone inválido");
-      setTimeout(() => setError(""), 3000);
-      return;
-    }
-
-    setError("");
     onSearch();
   };
 
@@ -128,13 +113,13 @@ export default function StickyPhoneInput({
     >
       <div className="w-full px-3 py-3 md:px-4 md:py-4">
         <div className="flex flex-col gap-2 max-w-6xl mx-auto">
-          {/* Error Message */}
-          {error && (
+          {/* ✅ Mensagem de erro apenas quando showInvalid */}
+          {showInvalid && (
             <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 animate-in slide-in-from-top">
               <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
               </svg>
-              {error}
+              {t("hero.invalid") || "Número de telefone inválido"}
             </div>
           )}
 

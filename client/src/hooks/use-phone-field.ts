@@ -4,7 +4,6 @@ import {
   countries,
   formatPhoneNumber,
   getMaxLength,
-  isValidPhoneNumber,
   parsePhoneNumberWithError,
 } from "@/lib/phone-utils";
 
@@ -16,11 +15,9 @@ export function usePhoneField(
   const [value, setValue] = useState("");
   const [userSelectedCountry, setUserSelectedCountry] = useState(false);
 
-  const [isValid, setIsValid] = useState(false);
-  const [isValidating, setIsValidating] = useState(false);
-
-  // ✅ novo: garante que só mostra inválido após terminar uma validação
-  const [validationDone, setValidationDone] = useState(false);
+  // ✅ erro só depois que o usuário tenta localizar
+  const [submitAttempted, setSubmitAttempted] = useState(false);
+  const [submitInvalid, setSubmitInvalid] = useState(false);
 
   const previousDigitsRef = useRef<string>("");
   const previousFormattedRef = useRef<string>("");
@@ -30,19 +27,10 @@ export function usePhoneField(
     []
   );
 
-  const dialCodeByCountry = useMemo(
-    () =>
-      new Map<CountryCode, string>(
-        countries.map((c) => [c.code as CountryCode, c.dialCode])
-      ),
-    []
-  );
-
   const resetInput = useCallback(() => {
     setValue("");
-    setIsValid(false);
-    setIsValidating(false);
-    setValidationDone(false);
+    setSubmitAttempted(false);
+    setSubmitInvalid(false);
     previousDigitsRef.current = "";
     previousFormattedRef.current = "";
   }, []);
@@ -54,10 +42,18 @@ export function usePhoneField(
     }
   }, [initialCountry, userSelectedCountry, country, resetInput]);
 
+  const clearSubmitError = useCallback(() => {
+    // ✅ assim que o usuário mexe, tira o vermelho (ele está corrigindo)
+    setSubmitAttempted(false);
+    setSubmitInvalid(false);
+  }, []);
+
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const inputValue = e.target.value;
       const previousFormatted = previousFormattedRef.current;
+
+      clearSubmitError();
 
       if (inputValue === "") {
         resetInput();
@@ -72,8 +68,8 @@ export function usePhoneField(
         currentDigits.length < previousDigits.length;
 
       if (isDeleting) {
+        // ✅ apagou máscara (")", espaço etc.) e os dígitos não mudaram
         let nextDigits = currentDigits;
-
         if (currentDigits === previousDigits) {
           nextDigits = previousDigits.slice(0, -1);
         }
@@ -85,7 +81,6 @@ export function usePhoneField(
 
         const formatted = formatPhoneNumber(nextDigits, country);
         setValue(formatted);
-
         previousDigitsRef.current = nextDigits;
         previousFormattedRef.current = formatted;
         return;
@@ -96,7 +91,7 @@ export function usePhoneField(
       previousDigitsRef.current = formatted.replace(/\D/g, "");
       previousFormattedRef.current = formatted;
     },
-    [country, resetInput]
+    [country, resetInput, clearSubmitError]
   );
 
   const handleCountryChange = useCallback(
@@ -106,91 +101,70 @@ export function usePhoneField(
 
       setUserSelectedCountry(true);
       setCountry(next);
+      clearSubmitError();
 
       setValue((prev) => {
         const digitsOnly = prev.replace(/\D/g, "");
         if (!digitsOnly) {
           previousDigitsRef.current = "";
           previousFormattedRef.current = "";
-          setIsValid(false);
-          setIsValidating(false);
-          setValidationDone(false);
           return "";
         }
 
         const reformatted = formatPhoneNumber(digitsOnly, next);
         previousDigitsRef.current = digitsOnly;
         previousFormattedRef.current = reformatted;
-
-        // vai revalidar quando atingir maxDigits
-        setIsValidating(false);
-        setValidationDone(false);
-
         return reformatted;
       });
     },
-    [validCountrySet]
+    [validCountrySet, clearSubmitError]
   );
 
   const digitsOnly = useMemo(() => value.replace(/\D/g, ""), [value]);
   const digitCount = digitsOnly.length;
   const maxDigits = useMemo(() => getMaxLength(country), [country]);
 
-  useEffect(() => {
-    // Se ainda não chegou no tamanho esperado: não valida e não mostra erro
-    if (digitCount === 0 || digitCount < maxDigits) {
-      setIsValidating(false);
-      setValidationDone(false);
+  // ✅ “inválido” só aparece se:
+  // - o usuário tentou localizar
+  // - e o submit deu inválido
+  const showInvalid = submitAttempted && submitInvalid;
+
+  const handleSearch = useCallback(() => {
+    setSubmitAttempted(true);
+
+    if (!digitsOnly) {
+      setSubmitInvalid(true);
       return;
     }
 
-    // ✅ assim que atingir maxDigits, já bloqueia feedback de inválido
-    setIsValidating(true);
-    setValidationDone(false);
-
-    const id = window.setTimeout(() => {
-      const ok = isValidPhoneNumber(value, country);
-      setIsValid(ok);
-      setIsValidating(false);
-      setValidationDone(true); // ✅ libera mostrar inválido caso seja false
-    }, 400);
-
-    return () => window.clearTimeout(id);
-  }, [value, country, digitCount, maxDigits]);
-
-  const handleSearch = useCallback(() => {
-    if (!digitsOnly || !isValid) return;
-
     try {
       const parsed = parsePhoneNumberWithError(digitsOnly, country);
-      if (parsed.isValid()) {
-        onValidSearch(parsed.formatInternational());
+
+      // ✅ 1) Bloqueia números incompletos (ex: 6-8 dígitos no BR)
+      // isPossible() verifica se o comprimento está dentro do range esperado
+      if (!parsed.isPossible()) {
+        setSubmitInvalid(true);
         return;
       }
+
+      // ✅ 2) Se for possível (comprimento correto), aceita
+      // isValid() é muito rigoroso e rejeita números "fake" como 11912345678
+      // Para um MVP, isPossible() é suficiente para garantir que o número
+      // tem o comprimento correto para o país
+      setSubmitInvalid(false);
+      onValidSearch(parsed.formatInternational());
     } catch {
-      // ignore
+      // ✅ Sem fallback que "deixa passar"
+      setSubmitInvalid(true);
     }
-
-    const dial = dialCodeByCountry.get(country);
-    onValidSearch(dial ? `${dial} ${digitsOnly}` : value);
-  }, [digitsOnly, isValid, country, onValidSearch, dialCodeByCountry, value]);
-
-  // ✅ só mostra inválido quando:
-  // - digitCount >= maxDigits
-  // - NÃO está validando
-  // - a validação daquele estado já terminou (validationDone)
-  // - e é inválido
-  const showInvalid =
-    digitCount >= maxDigits && validationDone && !isValidating && !isValid;
+  }, [digitsOnly, country, onValidSearch]);
 
   return {
     country,
     value,
-    isValid,
-    isValidating,
-    showInvalid,
     digitCount,
     maxDigits,
+    showInvalid,
     handleChange,
     handleCountryChange,
     handleSearch,

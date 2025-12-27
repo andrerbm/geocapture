@@ -1,11 +1,10 @@
-import { useMemo, useCallback, useState } from "react";
+import { useMemo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { CountryCode } from "libphonenumber-js";
 import { Country } from "@/lib/phone-utils";
 import {
   CountrySelector,
-  StatusIndicator,
   SecurityBadges,
   ErrorMessage,
 } from "./phone-input";
@@ -16,7 +15,6 @@ interface PhoneInputProps {
   selectedCountry: CountryCode;
   onCountryChange: (value: string) => void;
   countries: Country[];
-  isValid: boolean;
   showInvalid: boolean;
   onSearch: () => void;
   variant?: "hero" | "footer";
@@ -28,36 +26,22 @@ export default function PhoneInput({
   selectedCountry,
   onCountryChange,
   countries,
-  isValid,
   showInvalid,
   onSearch,
   variant = "hero",
 }: PhoneInputProps) {
   const { t } = useTranslation();
   const isHero = variant === "hero";
-  const [error, setError] = useState("");
 
   const selectedCountryData = useMemo(
     () => countries.find((c) => c.code === selectedCountry) || countries[0],
     [selectedCountry, countries]
   );
 
+  // ✅ Validação acontece no hook (submit-only), aqui apenas chamamos onSearch
   const handleSearch = useCallback(() => {
-    if (!phoneNumber.trim()) {
-      setError(t("hero.enterPhone") || "Por favor, digite um número de telefone");
-      setTimeout(() => setError(""), 3000);
-      return;
-    }
-
-    if (!isValid) {
-      setError(t("hero.invalid") || "Número de telefone inválido");
-      setTimeout(() => setError(""), 3000);
-      return;
-    }
-
-    setError("");
     onSearch();
-  }, [phoneNumber, isValid, onSearch, t]);
+  }, [onSearch]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -73,28 +57,20 @@ export default function PhoneInput({
     ? "space-y-3 max-w-xl mx-auto w-full"
     : "space-y-3 max-w-md mx-auto relative z-10";
 
+  // ✅ Borda vermelha apenas quando showInvalid (após tentativa de submit inválida)
   const inputContainerClasses = `flex items-center bg-white rounded-xl ${
     isHero ? "px-2 py-1.5" : "px-2 py-1"
   } transition-all duration-300 border ${
-    isValid
-      ? "border-[#00Cba9] shadow-[0_0_0_3px_rgba(0,203,169,0.15)]"
-      : showInvalid
-        ? "border-red-300 shadow-[0_0_0_3px_rgba(239,68,68,0.1)]"
-        : "border-gray-200 hover:border-gray-300"
+    showInvalid
+      ? "border-red-300 shadow-[0_0_0_3px_rgba(239,68,68,0.1)]"
+      : "border-gray-200 hover:border-gray-300"
   }`;
-
-  const shouldShowStatus = isValid || showInvalid;
 
   return (
     <div className={containerClasses}>
-      <ErrorMessage message={error} />
-
-      {shouldShowStatus && (
-        <StatusIndicator
-          isValid={isValid}
-          showInvalid={showInvalid}
-          isHero={isHero}
-        />
+      {/* ✅ Mensagem de erro apenas quando showInvalid */}
+      {showInvalid && (
+        <ErrorMessage message={t("hero.invalid") || "Número de telefone inválido"} />
       )}
 
       <div className={inputContainerClasses}>

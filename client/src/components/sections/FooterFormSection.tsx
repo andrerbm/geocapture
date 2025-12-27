@@ -9,7 +9,6 @@ interface FooterFormSectionProps {
   selectedCountry: CountryCode;
   onCountryChange: (value: string) => void;
   countries: Country[];
-  isValid: boolean;
   showInvalid: boolean;
   onSearch: () => void;
 }
@@ -20,7 +19,6 @@ export default function FooterFormSection({
   selectedCountry,
   onCountryChange,
   countries,
-  isValid,
   showInvalid,
   onSearch,
 }: FooterFormSectionProps) {
@@ -44,7 +42,6 @@ export default function FooterFormSection({
           selectedCountry={selectedCountry}
           onCountryChange={onCountryChange}
           countries={countries}
-          isValid={isValid}
           showInvalid={showInvalid}
           onSearch={onSearch}
           variant="footer"

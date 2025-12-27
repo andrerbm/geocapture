@@ -15,7 +15,6 @@ interface HeroSectionProps {
   selectedCountry: CountryCode;
   onCountryChange: (value: string) => void;
   countries: Country[];
-  isValid: boolean;
   showInvalid: boolean;
   onSearch: () => void;
 }
@@ -26,7 +25,6 @@ export default function HeroSection({
   selectedCountry,
   onCountryChange,
   countries,
-  isValid,
   showInvalid,
   onSearch,
 }: HeroSectionProps) {
@@ -143,7 +141,6 @@ export default function HeroSection({
           selectedCountry={selectedCountry}
           onCountryChange={onCountryChange}
           countries={countries}
-          isValid={isValid}
           showInvalid={showInvalid}
           onSearch={onSearch}
           variant="hero"
