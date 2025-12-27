@@ -1,7 +1,7 @@
+// SearchCard.tsx
 import { useTranslation } from "react-i18next";
 import { MapPin } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { PhoneInfo, Step } from "./types";
 import SearchSteps from "./SearchSteps";
 
@@ -10,6 +10,7 @@ interface SearchCardProps {
   phoneInfo: PhoneInfo | null;
   steps: Step[];
   progress: number;
+  totalDuration: number; // ✅ novo
   error: string | null;
 }
 
@@ -18,6 +19,7 @@ export default function SearchCard({
   phoneInfo,
   steps,
   progress,
+  totalDuration,
   error,
 }: SearchCardProps) {
   const { t } = useTranslation();
@@ -28,8 +30,9 @@ export default function SearchCard({
         {/* Icon */}
         <div className="flex justify-center mb-4">
           <div className="bg-[#00Cba9]/10 p-3 rounded-2xl relative">
-            <MapPin className="h-6 w-6 text-[#00Cba9]" />
-            <div className="absolute inset-0 rounded-2xl bg-[#00Cba9]/20 animate-ping" />
+            {/* halo leve (sem ping) */}
+            <div className="absolute inset-0 rounded-2xl ring-2 ring-[#00Cba9]/15" />
+            <MapPin className="relative h-6 w-6 text-[#00Cba9]" />
           </div>
         </div>
 
@@ -39,9 +42,9 @@ export default function SearchCard({
 
         {/* Phone number display */}
         <div className="mb-8 p-4 bg-gradient-to-br from-[#00Cba9]/5 to-[#00Cba9]/10 rounded-xl border border-[#00Cba9]/20">
-          <h1 
+          <h1
             className="text-2xl md:text-3xl font-bold text-[#00Cba9] tracking-wide break-all select-none"
-            style={{ WebkitUserSelect: 'none', WebkitTouchCallout: 'none' }}
+            style={{ WebkitUserSelect: "none", WebkitTouchCallout: "none" }}
           >
             {phoneNumber}
           </h1>
@@ -56,12 +59,10 @@ export default function SearchCard({
         {/* Steps */}
         <SearchSteps steps={steps} />
 
-        {/* Progress bar */}
+        {/* Progress bar (mobile-friendly) */}
         <div className="space-y-2">
-          <Progress
-            value={progress}
-            className="h-2 bg-gray-100 [&>div]:bg-gradient-to-r [&>div]:from-[#00Cba9] [&>div]:to-[#00e0b8] [&>div]:transition-all [&>div]:duration-300"
-          />
+          <ProgressBar progress={progress} durationMs={totalDuration} />
+
           <div className="flex justify-between text-xs text-gray-500">
             <span>{t("searching.analyzing")}</span>
             <span className="font-semibold">{Math.floor(progress)}%</span>
@@ -79,3 +80,25 @@ export default function SearchCard({
   );
 }
 
+function ProgressBar({
+  progress,
+  durationMs,
+}: {
+  progress: number;
+  durationMs: number;
+}) {
+  const clamped = Math.max(0, Math.min(progress, 100));
+
+  return (
+    <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+      <div
+        className="h-full origin-left transform-gpu will-change-transform rounded-full"
+        style={{
+          transform: `scaleX(${clamped / 100})`,
+          transition: `transform ${durationMs}ms linear`,
+          backgroundImage: "linear-gradient(to right, #00Cba9, #00e0b8)",
+        }}
+      />
+    </div>
+  );
+}

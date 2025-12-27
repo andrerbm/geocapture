@@ -2,68 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Project Overview
-
-GeoCapture is a phone location tracking web application built with React (client) and Express (server). The app allows users to search for phone numbers and track their location. Content is primarily in Portuguese (Brazilian).
-
-## Development Commands
-
-### Running the Application
-
-```bash
-npm run dev          # Start development server (server only)
-npm run dev:client   # Start Vite dev server on port 3000 (client only)
-```
-
-The application runs on port 5000 in development (configurable via `PORT` env variable). Both client and server must be running for full functionality.
-
-### Building
-
-```bash
-npm run build        # Build both client and server for production
-```
-
-The build process:
-
-- Uses Vite to build the React client to `dist/public`
-- Uses esbuild to bundle the Express server to `dist/index.cjs`
-- Server build selectively bundles dependencies (see `script/build.ts` allowlist)
-
-### Starting Production Build
-
-```bash
-npm start            # Run production build (NODE_ENV=production)
-```
-
-### Type Checking
-
-```bash
-npm run check        # Run TypeScript type checking without emitting files
-```
-
-### Database
-
-```bash
-npm run db:push      # Push Drizzle schema changes to PostgreSQL database
-```
-
-## Architecture
-
-### Monorepo Structure
-
-The project uses a monorepo structure with three main directories:
-
-- **`client/`** - React frontend (Vite + React 19)
-- **`server/`** - Express backend (Node.js)
-- **`shared/`** - Shared code between client and server (schemas, types)
-
-### Path Aliases
-
-TypeScript and Vite are configured with these path aliases:
-
-- `@/*` → `client/src/*`
-- `@shared/*` → `shared/*`
-- `@assets/*` → `attached_assets/*`
+# Project Overview
 
 # 📱 GeoCapture - Documentação da Estrutura do Projeto
 

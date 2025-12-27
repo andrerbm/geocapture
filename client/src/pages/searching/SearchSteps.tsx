@@ -1,3 +1,4 @@
+// SearchSteps.tsx
 import { CheckCircle2, Loader2 } from "lucide-react";
 import { Step } from "./types";
 
@@ -7,7 +8,7 @@ interface SearchStepsProps {
 
 export default function SearchSteps({ steps }: SearchStepsProps) {
   return (
-    <div className="space-y-6 text-left mb-8">
+    <div className="space-y-6 text-left mb-8 transform-gpu">
       {steps.map((step, index) => (
         <div
           key={index}
@@ -42,9 +43,11 @@ function StepIcon({ status }: { status: Step["status"] }) {
 
   if (status === "active") {
     return (
-      <div className="bg-[#00Cba9]/20 rounded-full p-0.5 relative">
-        <Loader2 className="h-4 w-4 text-[#00Cba9] animate-spin" />
-        <div className="absolute inset-0 rounded-full bg-[#00Cba9]/30 animate-ping" />
+      <div className="relative rounded-full p-0.5 bg-[#00Cba9]/15">
+        {/* halo leve (sem ping) */}
+        <div className="absolute inset-0 rounded-full ring-2 ring-[#00Cba9]/20" />
+        {/* só 1 animação contínua */}
+        <Loader2 className="relative h-4 w-4 text-[#00Cba9] motion-safe:animate-spin transform-gpu will-change-transform" />
       </div>
     );
   }
@@ -55,4 +58,3 @@ function StepIcon({ status }: { status: Step["status"] }) {
     </div>
   );
 }
-
