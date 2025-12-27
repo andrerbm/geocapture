@@ -46,22 +46,22 @@
     "card1": {
       "question": "Suspicion of betrayal?",
       "description": "Discover the truth about where your partner really is",
-      "cta": "The solution is here →"
+      "cta": "See location now →"
     },
     "card2": {
       "question": "Worried about your children?",
       "description": "Know where they are at any time of day",
-      "cta": "The solution is here →"
+      "cta": "Find out where they are →"
     },
     "card3": {
       "question": "Lost your cell phone?",
       "description": "Find your device even if it's turned off or without internet",
-      "cta": "The solution is here →"
+      "cta": "Locate in real time →"
     },
     "card4": {
       "question": "Need to locate someone?",
       "description": "Find the person you are looking for discreetly",
-      "cta": "The solution is here →"
+      "cta": "Start search →"
     }
   },
   "whyChoose": {

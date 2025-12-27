@@ -12,7 +12,6 @@ import {
   WhyChooseSection,
   DashboardPreviewSection,
   TechnologiesSection,
-  TestimonialsSection,
   HowItWorksSection,
   ReviewsSection,
   KeyQuestionsSection,
@@ -65,7 +64,6 @@ export default function Home() {
       <WhyChooseSection />
       <DashboardPreviewSection />
       <TechnologiesSection />
-      <TestimonialsSection />
       <HowItWorksSection />
       <ReviewsSection />
       <KeyQuestionsSection />

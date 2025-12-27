@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { MapPin, Activity, Smartphone, Radio, CheckCircle2 } from "lucide-react";
+import { MapPin, Smartphone, Radio, CheckCircle2 } from "lucide-react";
 import dashboardPng from "@assets/dashboard.png";
 import LocateButton from "@/components/LocateButton";
 
@@ -12,12 +12,6 @@ export default function DashboardPreviewSection() {
       title: t("dashboard.feature1Title"),
       description: t("dashboard.feature1Desc"),
       color: "text-cyan-600 bg-cyan-50",
-    },
-    {
-      icon: Activity,
-      title: t("dashboard.feature2Title"),
-      description: t("dashboard.feature2Desc"),
-      color: "text-blue-600 bg-blue-50",
     },
     {
       icon: Smartphone,
@@ -129,4 +123,3 @@ export default function DashboardPreviewSection() {
     </section>
   );
 }
-

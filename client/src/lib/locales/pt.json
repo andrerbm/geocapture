@@ -46,22 +46,22 @@
     "card1": {
       "question": "Suspeita de traição?",
       "description": "Descubra a verdade sobre onde seu parceiro realmente está",
-      "cta": "A solução está aqui →"
+      "cta": "Ver localização agora →"
     },
     "card2": {
       "question": "Preocupado com seus filhos?",
       "description": "Saiba onde eles estão a qualquer momento do dia",
-      "cta": "A solução está aqui →"
+      "cta": "Descobrir onde está →"
     },
     "card3": {
       "question": "Perdeu seu celular?",
       "description": "Encontre seu aparelho mesmo desligado ou sem internet",
-      "cta": "A solução está aqui →"
+      "cta": "Localizar em tempo real →"
     },
     "card4": {
       "question": "Precisa localizar alguém?",
       "description": "Encontre a pessoa que você procura de forma discreta",
-      "cta": "A solução está aqui →"
+      "cta": "Iniciar busca →"
     }
   },
   "whyChoose": {
